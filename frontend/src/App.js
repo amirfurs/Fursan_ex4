@@ -1,11 +1,425 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
+import { BrowserRouter, Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const App = () => {
+// Public Interface Components
+const PublicLayout = ({ children }) => {
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    fetchSections();
+  }, []);
+
+  const fetchSections = async () => {
+    try {
+      const response = await axios.get(`${API}/sections`);
+      setSections(response.data);
+    } catch (error) {
+      console.error("Error fetching sections:", error);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      {/* Public Header */}
+      <header className="bg-gradient-to-r from-black via-red-900 to-black border-b border-red-800">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <Link to="/" className="text-3xl font-bold">
+              <span className="text-red-500">Red</span>
+              <span className="text-white">Black</span>
+              <span className="text-red-500">News</span>
+            </Link>
+            <nav className="hidden md:flex space-x-6">
+              <Link to="/" className="hover:text-red-400 transition-colors">Home</Link>
+              {sections.map((section) => (
+                <Link 
+                  key={section.id} 
+                  to={`/section/${section.id}`}
+                  className="hover:text-red-400 transition-colors"
+                >
+                  {section.name}
+                </Link>
+              ))}
+              <Link to="/admin" className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition-colors">
+                Admin Panel
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Navigation */}
+      <div className="md:hidden bg-gray-900 border-b border-gray-700">
+        <div className="container mx-auto px-4 py-2">
+          <div className="flex flex-wrap gap-2">
+            <Link to="/" className="bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded text-sm">Home</Link>
+            {sections.map((section) => (
+              <Link 
+                key={section.id} 
+                to={`/section/${section.id}`}
+                className="bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded text-sm"
+              >
+                {section.name}
+              </Link>
+            ))}
+            <Link to="/admin" className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm">
+              Admin
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {children}
+
+      {/* Footer */}
+      <footer className="bg-gray-900 border-t border-gray-700 mt-12">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center text-gray-400">
+            <p>&copy; 2025 RedBlackNews. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+const HomePage = () => {
+  const [articles, setArticles] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [articlesRes, sectionsRes] = await Promise.all([
+        axios.get(`${API}/articles`),
+        axios.get(`${API}/sections`)
+      ]);
+      setArticles(articlesRes.data);
+      setSections(sectionsRes.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getSectionName = (sectionId) => {
+    const section = sections.find(s => s.id === sectionId);
+    return section ? section.name : "Unknown Section";
+  };
+
+  const featuredArticles = articles.slice(0, 3);
+  const recentArticles = articles.slice(3);
+
+  if (loading) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-12 text-center">
+          <div className="text-6xl mb-4">📰</div>
+          <p className="text-gray-400">Loading articles...</p>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-red-900 via-black to-red-900 py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">
+              Latest <span className="text-red-500">News</span> & Articles
+            </h1>
+            <p className="text-xl text-gray-300">Stay informed with our quality journalism</p>
+          </div>
+
+          {/* Featured Articles */}
+          {featuredArticles.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featuredArticles.map((article) => (
+                <Link
+                  key={article.id}
+                  to={`/article/${article.id}`}
+                  className="bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-colors group"
+                >
+                  {article.image_data && (
+                    <img
+                      src={article.image_data}
+                      alt={article.title}
+                      className="w-full h-48 object-cover group-hover:opacity-90 transition-opacity"
+                    />
+                  )}
+                  <div className="p-6">
+                    <div className="text-red-500 text-sm mb-2">{getSectionName(article.section_id)}</div>
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-red-400 transition-colors">
+                      {article.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm line-clamp-3 mb-4">
+                      {article.content.slice(0, 120)}...
+                    </p>
+                    <div className="text-xs text-gray-500">
+                      By {article.author} • {new Date(article.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Recent Articles */}
+      <div className="container mx-auto px-4 py-12">
+        <h2 className="text-3xl font-bold mb-8">Recent Articles</h2>
+        
+        {recentArticles.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">📝</div>
+            <h3 className="text-xl font-semibold mb-2">No articles published yet</h3>
+            <p className="text-gray-400">Check back soon for new content!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentArticles.map((article) => (
+              <Link
+                key={article.id}
+                to={`/article/${article.id}`}
+                className="bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-colors group"
+              >
+                {article.image_data && (
+                  <img
+                    src={article.image_data}
+                    alt={article.title}
+                    className="w-full h-40 object-cover group-hover:opacity-90 transition-opacity"
+                  />
+                )}
+                <div className="p-4">
+                  <div className="text-red-500 text-sm mb-2">{getSectionName(article.section_id)}</div>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-red-400 transition-colors line-clamp-2">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm line-clamp-2 mb-3">
+                    {article.content.slice(0, 100)}...
+                  </p>
+                  <div className="text-xs text-gray-500">
+                    By {article.author} • {new Date(article.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </PublicLayout>
+  );
+};
+
+const ArticlePage = () => {
+  const { id } = useParams();
+  const [article, setArticle] = useState(null);
+  const [sections, setSections] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchArticle();
+    fetchSections();
+  }, [id]);
+
+  const fetchArticle = async () => {
+    try {
+      const response = await axios.get(`${API}/articles/${id}`);
+      setArticle(response.data);
+    } catch (error) {
+      console.error("Error fetching article:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSections = async () => {
+    try {
+      const response = await axios.get(`${API}/sections`);
+      setSections(response.data);
+    } catch (error) {
+      console.error("Error fetching sections:", error);
+    }
+  };
+
+  const getSectionName = (sectionId) => {
+    const section = sections.find(s => s.id === sectionId);
+    return section ? section.name : "Unknown Section";
+  };
+
+  if (loading) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-12 text-center">
+          <div className="text-6xl mb-4">📖</div>
+          <p className="text-gray-400">Loading article...</p>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  if (!article) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-12 text-center">
+          <div className="text-6xl mb-4">❌</div>
+          <h2 className="text-2xl font-bold mb-4">Article Not Found</h2>
+          <Link to="/" className="text-red-500 hover:text-red-400">← Back to Home</Link>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-8">
+        <Link to="/" className="text-red-500 hover:text-red-400 mb-6 inline-block">
+          ← Back to Articles
+        </Link>
+        
+        <article className="max-w-4xl mx-auto">
+          <header className="mb-8">
+            <div className="text-red-500 text-sm mb-2">{getSectionName(article.section_id)}</div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">{article.title}</h1>
+            <div className="flex items-center text-gray-400 text-sm">
+              <span>By {article.author}</span>
+              <span className="mx-2">•</span>
+              <span>{new Date(article.created_at).toLocaleDateString()}</span>
+              <span className="mx-2">•</span>
+              <span>{new Date(article.updated_at).toLocaleDateString()} (Updated)</span>
+            </div>
+          </header>
+
+          {article.image_data && (
+            <div className="mb-8">
+              <img
+                src={article.image_data}
+                alt={article.title}
+                className="w-full h-64 md:h-96 object-cover rounded-lg"
+              />
+            </div>
+          )}
+
+          <div className="prose prose-invert prose-lg max-w-none">
+            {article.content.split('\n').map((paragraph, index) => (
+              <p key={index} className="mb-6 text-gray-300 leading-relaxed">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </article>
+      </div>
+    </PublicLayout>
+  );
+};
+
+const SectionPage = () => {
+  const { id } = useParams();
+  const [articles, setArticles] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [currentSection, setCurrentSection] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, [id]);
+
+  const fetchData = async () => {
+    try {
+      const [articlesRes, sectionsRes] = await Promise.all([
+        axios.get(`${API}/articles/section/${id}`),
+        axios.get(`${API}/sections`)
+      ]);
+      setArticles(articlesRes.data);
+      setSections(sectionsRes.data);
+      setCurrentSection(sectionsRes.data.find(s => s.id === id));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-12 text-center">
+          <div className="text-6xl mb-4">📂</div>
+          <p className="text-gray-400">Loading section...</p>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <Link to="/" className="text-red-500 hover:text-red-400 mb-4 inline-block">
+            ← Back to Home
+          </Link>
+          <h1 className="text-4xl font-bold mb-2">{currentSection?.name || "Section"}</h1>
+          {currentSection?.description && (
+            <p className="text-gray-400">{currentSection.description}</p>
+          )}
+        </div>
+
+        {articles.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">📰</div>
+            <h3 className="text-xl font-semibold mb-2">No articles in this section yet</h3>
+            <p className="text-gray-400">Check back soon for new content!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {articles.map((article) => (
+              <Link
+                key={article.id}
+                to={`/article/${article.id}`}
+                className="bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-colors group"
+              >
+                {article.image_data && (
+                  <img
+                    src={article.image_data}
+                    alt={article.title}
+                    className="w-full h-40 object-cover group-hover:opacity-90 transition-opacity"
+                  />
+                )}
+                <div className="p-4">
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-red-400 transition-colors line-clamp-2">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm line-clamp-2 mb-3">
+                    {article.content.slice(0, 100)}...
+                  </p>
+                  <div className="text-xs text-gray-500">
+                    By {article.author} • {new Date(article.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </PublicLayout>
+  );
+};
+
+// Admin Panel Components
+const AdminPanel = () => {
   const [sections, setSections] = useState([]);
   const [articles, setArticles] = useState([]);
   const [selectedSection, setSelectedSection] = useState("all");
@@ -24,7 +438,6 @@ const App = () => {
     image_name: ""
   });
 
-  // Load data on component mount
   useEffect(() => {
     fetchSections();
     fetchArticles();
@@ -129,26 +542,31 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-black via-red-900 to-black py-20">
-        <div className="absolute inset-0 bg-black opacity-60"></div>
-        <div className="relative container mx-auto px-4 text-center">
-          <h1 className="text-6xl font-bold mb-4 text-white">
-            <span className="text-red-500">Article</span> Publishing
-          </h1>
-          <p className="text-xl text-gray-300 mb-8">
-            Create, manage, and publish your content with style
-          </p>
-          <div className="flex justify-center space-x-4">
+      {/* Admin Header */}
+      <header className="bg-red-900 border-b border-red-700">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Admin Panel</h1>
+            <Link to="/" className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm transition-colors">
+              View Public Site
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Admin Controls */}
+      <div className="bg-gray-900 border-b border-gray-700">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex space-x-4">
             <button
               onClick={() => setShowAddSection(true)}
-              className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors"
+              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-semibold transition-colors"
             >
               Add Section
             </button>
             <button
               onClick={() => setShowAddArticle(true)}
-              className="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg font-semibold transition-colors"
+              className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-semibold transition-colors"
             >
               Write Article
             </button>
@@ -158,10 +576,10 @@ const App = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
+          {/* Admin Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-gray-900 rounded-lg p-6 sticky top-4">
-              <h2 className="text-2xl font-bold mb-4 text-red-500">Sections</h2>
+              <h2 className="text-2xl font-bold mb-4 text-red-500">Content Management</h2>
               <div className="space-y-2">
                 <button
                   onClick={() => setSelectedSection("all")}
@@ -187,7 +605,8 @@ const App = () => {
                     </button>
                     <button
                       onClick={() => deleteSection(section.id)}
-                      className="ml-2 px-2 py-1 bg-red-800 hover:bg-red-700 rounded text-sm"
+                      className="ml-2 px-2 py-1 bg-red-800 hover:bg-red-700 rounded text-xs"
+                      title="Delete Section"
                     >
                       ✕
                     </button>
@@ -197,10 +616,10 @@ const App = () => {
             </div>
           </div>
 
-          {/* Main Content */}
+          {/* Admin Main Content */}
           <div className="lg:col-span-3">
             {selectedArticle ? (
-              /* Article Detail View */
+              /* Article Edit View */
               <div className="bg-gray-900 rounded-lg p-8">
                 <button
                   onClick={() => setSelectedArticle(null)}
@@ -216,12 +635,17 @@ const App = () => {
                       {new Date(selectedArticle.created_at).toLocaleDateString()}
                     </div>
                   </div>
-                  <button
-                    onClick={() => deleteArticle(selectedArticle.id)}
-                    className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg"
-                  >
-                    Delete Article
-                  </button>
+                  <div className="flex space-x-2">
+                    <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm">
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteArticle(selectedArticle.id)}
+                      className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
                 
                 {selectedArticle.image_data && (
@@ -241,11 +665,11 @@ const App = () => {
                 </div>
               </div>
             ) : (
-              /* Articles Grid */
+              /* Articles Management Grid */
               <>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-3xl font-bold">
-                    {selectedSection === "all" ? "All Articles" : getSectionName(selectedSection)}
+                    Manage {selectedSection === "all" ? "All Articles" : getSectionName(selectedSection)}
                   </h2>
                   <span className="text-gray-400">{filteredArticles.length} articles</span>
                 </div>
@@ -254,27 +678,41 @@ const App = () => {
                   {filteredArticles.map((article) => (
                     <div
                       key={article.id}
-                      onClick={() => setSelectedArticle(article)}
-                      className="bg-gray-900 rounded-lg overflow-hidden cursor-pointer hover:bg-gray-800 transition-colors"
+                      className="bg-gray-900 rounded-lg overflow-hidden"
                     >
                       {article.image_data && (
                         <img
                           src={article.image_data}
                           alt={article.title}
-                          className="w-full h-48 object-cover"
+                          className="w-full h-32 object-cover"
                         />
                       )}
-                      <div className="p-6">
+                      <div className="p-4">
                         <div className="text-red-500 text-sm mb-2">
                           {getSectionName(article.section_id)}
                         </div>
-                        <h3 className="text-xl font-bold mb-2 line-clamp-2">{article.title}</h3>
-                        <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                          {article.content.slice(0, 150)}...
+                        <h3 className="text-lg font-bold mb-2 line-clamp-2">{article.title}</h3>
+                        <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                          {article.content.slice(0, 100)}...
                         </p>
-                        <div className="flex justify-between text-sm text-gray-500">
-                          <span>By {article.author}</span>
-                          <span>{new Date(article.created_at).toLocaleDateString()}</span>
+                        <div className="flex justify-between items-center">
+                          <div className="text-xs text-gray-500">
+                            By {article.author}
+                          </div>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => setSelectedArticle(article)}
+                              className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
+                            >
+                              View
+                            </button>
+                            <button
+                              onClick={() => deleteArticle(article.id)}
+                              className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -418,6 +856,20 @@ const App = () => {
         </div>
       )}
     </div>
+  );
+};
+
+// Main App Component with Routing
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/article/:id" element={<ArticlePage />} />
+        <Route path="/section/:id" element={<SectionPage />} />
+        <Route path="/admin" element={<AdminPanel />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
