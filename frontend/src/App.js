@@ -1973,7 +1973,7 @@ const AdminPanel = () => {
                   <img
                     src={currentLogo.logo_data}
                     alt="Current Logo"
-                    className="max-w-full h-32 object-contain mx-auto mb-3 bg-white rounded-lg p-2"
+                    className="max-w-full h-32 object-contain mx-auto mb-3 bg-black rounded-lg p-2 border border-gray-600"
                   />
                   <p className="text-sm text-gray-400">{currentLogo.logo_name}</p>
                 </div>
