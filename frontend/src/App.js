@@ -1128,13 +1128,23 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
 
+    // Trim whitespace from inputs to prevent login issues
+    const cleanedFormData = {
+      username: formData.username.trim(),
+      password: formData.password.trim()
+    };
+
     try {
-      const response = await axios.post(`${API}/login`, formData);
+      const response = await axios.post(`${API}/login`, cleanedFormData);
       login(response.data.access_token, response.data.user);
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);
-      setError(error.response?.data?.detail || 'Login failed');
+      if (error.response?.status === 401) {
+        setError('Invalid username or password. Please check your credentials and try again.');
+      } else {
+        setError(error.response?.data?.detail || 'Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
