@@ -98,15 +98,19 @@ const PublicLayout = ({ children }) => {
       <header className="bg-gradient-to-r from-black via-red-900 to-black border-b border-red-800 shadow-lg">
         <div className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center space-x-3">
-              {/* Logo placeholder - will be replaced with actual logo */}
-              <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">F</span>
+            <Link to="/" className="flex items-center space-x-4">
+              {/* Foursan al aQida Logo - Replace base64 string below with actual logo */}
+              <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                {/* Temporary placeholder - will be replaced with actual logo */}
+                <div className="text-center">
+                  <div className="text-gray-600 text-xs font-arabic">فرسان</div>
+                  <div className="text-gray-600 text-xs">العقيدة</div>
+                </div>
               </div>
-              <div className="text-4xl font-bold tracking-tight">
-                <span className="text-red-500">Red</span>
-                <span className="text-white">Black</span>
-                <span className="text-red-500">News</span>
+              <div className="text-2xl md:text-3xl font-bold tracking-tight">
+                <span className="text-red-500">Foursan</span>
+                <span className="text-white"> al </span>
+                <span className="text-red-500">aQida</span>
               </div>
             </Link>
             <div className="flex items-center space-x-6">
