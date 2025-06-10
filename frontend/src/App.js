@@ -1036,8 +1036,10 @@ const RegisterPage = () => {
                 value={formData.username}
                 onChange={(e) => setFormData({...formData, username: e.target.value})}
                 className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                placeholder="Choose a unique username"
                 required
               />
+              <p className="text-xs text-gray-400 mt-1">Remember this exactly - it's case-sensitive for login</p>
             </div>
 
             <div>
@@ -1047,6 +1049,7 @@ const RegisterPage = () => {
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                placeholder="your.email@example.com"
                 required
               />
             </div>
@@ -1058,6 +1061,7 @@ const RegisterPage = () => {
                 value={formData.full_name}
                 onChange={(e) => setFormData({...formData, full_name: e.target.value})}
                 className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                placeholder="Your full name"
                 required
               />
             </div>
@@ -1086,9 +1090,11 @@ const RegisterPage = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                placeholder="Choose a strong password"
                 required
                 minLength="6"
               />
+              <p className="text-xs text-gray-400 mt-1">At least 6 characters - remember this exactly for login</p>
             </div>
 
             <div>
@@ -1098,6 +1104,7 @@ const RegisterPage = () => {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                 className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                placeholder="Repeat your password"
                 required
               />
             </div>
