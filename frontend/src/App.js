@@ -113,13 +113,21 @@ const PublicLayout = ({ children }) => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
             <Link to="/" className="flex items-center space-x-4">
-              {/* Foursan al aQida Logo - Replace base64 string below with actual logo */}
+              {/* Dynamic Logo */}
               <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                {/* Temporary placeholder - will be replaced with actual logo */}
-                <div className="text-center">
-                  <div className="text-gray-600 text-xs font-arabic">فرسان</div>
-                  <div className="text-gray-600 text-xs">العقيدة</div>
-                </div>
+                {siteLogo?.logo_data ? (
+                  <img
+                    src={siteLogo.logo_data}
+                    alt="Site Logo"
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  /* Temporary placeholder - will be replaced with actual logo */
+                  <div className="text-center">
+                    <div className="text-gray-600 text-xs font-arabic">فرسان</div>
+                    <div className="text-gray-600 text-xs">العقيدة</div>
+                  </div>
+                )}
               </div>
               <div className="text-2xl md:text-3xl font-bold tracking-tight">
                 <span className="text-red-500">Foursan</span>
