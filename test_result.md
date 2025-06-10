@@ -315,7 +315,7 @@ test_plan:
     - "Public Interface (Visitor View)"
     - "Admin Panel Interface"
   stuck_tasks: []
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
 agent_communication:
@@ -333,3 +333,5 @@ agent_communication:
     message: "Investigated reported user authentication login issue. Created comprehensive test suite in auth_comprehensive_test.py to test all aspects of the authentication system. Tests included user registration, login with same credentials, password case sensitivity, username case sensitivity, whitespace handling, and special characters in passwords. All tests passed successfully. The authentication system is working correctly and enforces exact matching of credentials. Users can register and immediately login with the same credentials. The JWT token system is functioning properly for authenticated endpoints."
   - agent: "testing"
     message: "Completed testing of the Section Management API with Arabic section names as requested. Created arabic_section_test.py to specifically test creating, retrieving, and deleting sections with Arabic names and descriptions. All tests passed successfully. The system correctly handles Arabic text in section names and descriptions, preserving the text properly in both creation and retrieval operations. Also verified that articles with Arabic content can be created within these sections and that the cascade deletion of articles when a section is deleted works correctly. The Section Management API is fully functional with Arabic content."
+  - agent: "testing"
+    message: "Completed testing of the frontend components. Successfully tested the admin panel interface, section management UI, image upload UI, user authentication UI, comment system UI, and logo management UI. All components are working correctly. The admin panel login works with the password 'admin2025'. The section management UI allows creating and deleting sections with Arabic names and descriptions. The image upload component works with preview functionality. The user authentication UI works for login, registration, and profile management. The comment system UI allows adding, editing, and deleting comments. The logo management UI works for uploading and displaying logos."
