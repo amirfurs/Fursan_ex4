@@ -114,7 +114,7 @@ const PublicLayout = ({ children }) => {
           <div className="flex justify-between items-center">
             <Link to="/" className="flex items-center space-x-4">
               {/* Dynamic Logo */}
-              <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 bg-black rounded-lg flex items-center justify-center overflow-hidden border border-gray-600">
                 {siteLogo?.logo_data ? (
                   <img
                     src={siteLogo.logo_data}
@@ -124,8 +124,8 @@ const PublicLayout = ({ children }) => {
                 ) : (
                   /* Temporary placeholder - will be replaced with actual logo */
                   <div className="text-center">
-                    <div className="text-gray-600 text-xs font-arabic">فرسان</div>
-                    <div className="text-gray-600 text-xs">العقيدة</div>
+                    <div className="text-gray-300 text-xs font-arabic">فرسان</div>
+                    <div className="text-gray-300 text-xs">العقيدة</div>
                   </div>
                 )}
               </div>
