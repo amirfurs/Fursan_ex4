@@ -433,8 +433,9 @@ async def delete_article(article_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Article not found")
     
-    # Also delete likes for this article
+    # Also delete likes and comments for this article
     await db.likes.delete_many({"article_id": article_id})
+    await db.comments.delete_many({"article_id": article_id})
     return {"message": "Article deleted successfully"}
 
 @api_router.get("/articles/section/{section_id}", response_model=List[ArticleResponse])
