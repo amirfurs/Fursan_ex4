@@ -626,6 +626,241 @@ const ArticlePage = () => {
   );
 };
 
+// Comments Section Component
+const CommentsSection = ({ articleId }) => {
+  const { user, isAuthenticated } = useAuth();
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [editingComment, setEditingComment] = useState(null);
+  const [editContent, setEditContent] = useState('');
+
+  useEffect(() => {
+    fetchComments();
+  }, [articleId]);
+
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(`${API}/articles/${articleId}/comments`);
+      setComments(response.data);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    setSubmitting(true);
+    try {
+      const response = await axios.post(`${API}/articles/${articleId}/comments`, {
+        content: newComment.trim()
+      });
+      setComments([...comments, response.data]);
+      setNewComment('');
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+      alert(error.response?.data?.detail || 'Failed to post comment');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleEditComment = async (commentId) => {
+    if (!editContent.trim()) return;
+
+    try {
+      const response = await axios.put(`${API}/comments/${commentId}`, {
+        content: editContent.trim()
+      });
+      setComments(comments.map(c => c.id === commentId ? response.data : c));
+      setEditingComment(null);
+      setEditContent('');
+    } catch (error) {
+      console.error('Error editing comment:', error);
+      alert(error.response?.data?.detail || 'Failed to edit comment');
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('Are you sure you want to delete this comment?')) return;
+
+    try {
+      await axios.delete(`${API}/comments/${commentId}`);
+      setComments(comments.filter(c => c.id !== commentId));
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      alert(error.response?.data?.detail || 'Failed to delete comment');
+    }
+  };
+
+  const startEditing = (comment) => {
+    setEditingComment(comment.id);
+    setEditContent(comment.content);
+  };
+
+  const cancelEditing = () => {
+    setEditingComment(null);
+    setEditContent('');
+  };
+
+  return (
+    <div className="mt-16 pt-8 border-t border-gray-800">
+      <h3 className="text-2xl font-bold mb-6 flex items-center">
+        <svg className="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        Comments ({comments.length})
+      </h3>
+
+      {/* Comment Form */}
+      {isAuthenticated ? (
+        <form onSubmit={handleSubmitComment} className="mb-8">
+          <div className="flex items-start space-x-4">
+            {user.profile_picture && (
+              <img
+                src={user.profile_picture}
+                alt={user.full_name}
+                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              />
+            )}
+            <div className="flex-1">
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Write a comment..."
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 resize-none"
+                rows={3}
+                required
+              />
+              <div className="flex justify-between items-center mt-3">
+                <span className="text-sm text-gray-400">
+                  Commenting as {user.full_name}
+                </span>
+                <button
+                  type="submit"
+                  disabled={submitting || !newComment.trim()}
+                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Posting...' : 'Post Comment'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      ) : (
+        <div className="mb-8 p-4 bg-gray-800 rounded-lg text-center">
+          <p className="text-gray-400 mb-3">Please login to join the conversation</p>
+          <Link to="/login" className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-medium transition-colors">
+            Login to Comment
+          </Link>
+        </div>
+      )}
+
+      {/* Comments List */}
+      {loading ? (
+        <div className="text-center py-8">
+          <div className="animate-pulse text-gray-400">Loading comments...</div>
+        </div>
+      ) : comments.length === 0 ? (
+        <div className="text-center py-8 text-gray-400">
+          <svg className="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          <p className="text-lg font-medium">No comments yet</p>
+          <p className="text-sm">Be the first to share your thoughts!</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {comments.map((comment) => (
+            <div key={comment.id} className="bg-gray-900 rounded-lg p-6">
+              <div className="flex items-start space-x-4">
+                {comment.user_profile_picture ? (
+                  <img
+                    src={comment.user_profile_picture}
+                    alt={comment.user_full_name}
+                    className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
+                    <span className="text-gray-400 text-sm">👤</span>
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <h4 className="font-semibold text-white">{comment.user_full_name}</h4>
+                      <time className="text-sm text-gray-400">
+                        {new Date(comment.created_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                        {comment.updated_at !== comment.created_at && (
+                          <span className="ml-2">(edited)</span>
+                        )}
+                      </time>
+                    </div>
+                    {user && user.id === comment.user_id && (
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => startEditing(comment)}
+                          className="text-blue-400 hover:text-blue-300 text-sm"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="text-red-400 hover:text-red-300 text-sm"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {editingComment === comment.id ? (
+                    <div className="space-y-3">
+                      <textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 resize-none"
+                        rows={3}
+                      />
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleEditComment(comment.id)}
+                          className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-colors"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={cancelEditing}
+                          className="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-sm transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Like Button Component
 const LikeButton = ({ article }) => {
   const { user, isAuthenticated } = useAuth();
