@@ -350,6 +350,146 @@ class TestBackendAPI(unittest.TestCase):
                 self.created_articles.remove(article_id)
         
         print("Successfully verified all articles were cascade deleted with the section")
+        
+    # Comment System API Tests
+    def test_comment_system(self):
+        """Test Comment System APIs"""
+        print("\n=== Testing Comment System APIs ===")
+        
+        # 1. Create a comment (requires authentication)
+        comment_data = {
+            "content": f"This is a test comment {uuid.uuid4()}"
+        }
+        
+        print("Creating a comment with authentication...")
+        response = requests.post(
+            f"{API_URL}/articles/{self.test_article['id']}/comments", 
+            json=comment_data,
+            headers=self.auth_headers
+        )
+        self.assertEqual(response.status_code, 200, f"Failed to create comment: {response.text}")
+        
+        comment = response.json()
+        self.assertEqual(comment["content"], comment_data["content"])
+        self.assertEqual(comment["article_id"], self.test_article["id"])
+        self.assertEqual(comment["user_full_name"], self.test_user_data["full_name"])
+        self.assertIn("id", comment)
+        
+        # Add to cleanup list
+        self.created_comments.append(comment["id"])
+        comment_id = comment["id"]
+        print(f"Successfully created comment with ID: {comment_id}")
+        
+        # 2. Get comments for an article (public access)
+        print(f"Getting comments for article ID: {self.test_article['id']}...")
+        response = requests.get(f"{API_URL}/articles/{self.test_article['id']}/comments")
+        self.assertEqual(response.status_code, 200, f"Failed to get comments: {response.text}")
+        
+        comments = response.json()
+        self.assertIsInstance(comments, list)
+        self.assertTrue(any(c["id"] == comment_id for c in comments), "Created comment not found in comments list")
+        print(f"Successfully retrieved {len(comments)} comments")
+        
+        # 3. Update a comment (user can edit own comments)
+        update_data = {
+            "content": f"This comment has been updated {uuid.uuid4()}"
+        }
+        
+        print(f"Updating comment with ID: {comment_id}...")
+        response = requests.put(
+            f"{API_URL}/comments/{comment_id}", 
+            json=update_data,
+            headers=self.auth_headers
+        )
+        self.assertEqual(response.status_code, 200, f"Failed to update comment: {response.text}")
+        
+        updated_comment = response.json()
+        self.assertEqual(updated_comment["id"], comment_id)
+        self.assertEqual(updated_comment["content"], update_data["content"])
+        print("Successfully updated comment")
+        
+        # 4. Delete a comment (user can delete own comments)
+        print(f"Deleting comment with ID: {comment_id}...")
+        response = requests.delete(
+            f"{API_URL}/comments/{comment_id}",
+            headers=self.auth_headers
+        )
+        self.assertEqual(response.status_code, 200, f"Failed to delete comment: {response.text}")
+        
+        # Verify comment was deleted
+        response = requests.get(f"{API_URL}/articles/{self.test_article['id']}/comments")
+        comments = response.json()
+        self.assertFalse(any(c["id"] == comment_id for c in comments), "Deleted comment still found in comments list")
+        print("Successfully deleted comment")
+        
+        # Remove from cleanup list since we already deleted it
+        self.created_comments.remove(comment_id)
+        
+        # 5. Test creating a comment without authentication
+        print("Testing comment creation without authentication...")
+        response = requests.post(
+            f"{API_URL}/articles/{self.test_article['id']}/comments", 
+            json={"content": "This should fail"}
+        )
+        self.assertEqual(response.status_code, 401, "Expected 401 for unauthenticated comment creation")
+        print("Successfully received 401 for unauthenticated comment creation")
+        
+    # Logo Management API Tests
+    def test_logo_management(self):
+        """Test Logo Management APIs"""
+        print("\n=== Testing Logo Management APIs ===")
+        
+        # 1. Get current logo settings (public access)
+        print("Getting current logo settings...")
+        response = requests.get(f"{API_URL}/settings/logo")
+        self.assertEqual(response.status_code, 200, f"Failed to get logo settings: {response.text}")
+        
+        logo_settings = response.json()
+        self.assertIn("logo_data", logo_settings)
+        self.assertIn("logo_name", logo_settings)
+        self.assertIn("site_name", logo_settings)
+        print("Successfully retrieved logo settings")
+        
+        # Save initial logo data for comparison
+        initial_logo_data = logo_settings.get("logo_data")
+        initial_logo_name = logo_settings.get("logo_name")
+        
+        # 2. Update logo settings
+        logo_update = {
+            "logo_data": self.sample_image_base64,
+            "logo_name": f"test_logo_{uuid.uuid4()}.png"
+        }
+        
+        print("Updating logo settings...")
+        response = requests.put(f"{API_URL}/settings/logo", json=logo_update)
+        self.assertEqual(response.status_code, 200, f"Failed to update logo settings: {response.text}")
+        
+        updated_logo = response.json()
+        self.assertEqual(updated_logo["logo_data"], logo_update["logo_data"])
+        self.assertEqual(updated_logo["logo_name"], logo_update["logo_name"])
+        print("Successfully updated logo settings")
+        
+        # 3. Verify logo was updated by getting it again
+        print("Verifying logo update...")
+        response = requests.get(f"{API_URL}/settings/logo")
+        self.assertEqual(response.status_code, 200, f"Failed to get updated logo settings: {response.text}")
+        
+        verified_logo = response.json()
+        self.assertEqual(verified_logo["logo_data"], logo_update["logo_data"])
+        self.assertEqual(verified_logo["logo_name"], logo_update["logo_name"])
+        print("Successfully verified logo update")
+        
+        # 4. Restore original logo if there was one
+        if initial_logo_data or initial_logo_name:
+            restore_data = {
+                "logo_data": initial_logo_data,
+                "logo_name": initial_logo_name
+            }
+            
+            print("Restoring original logo settings...")
+            response = requests.put(f"{API_URL}/settings/logo", json=restore_data)
+            self.assertEqual(response.status_code, 200, f"Failed to restore logo settings: {response.text}")
+            print("Successfully restored original logo settings")
 
 if __name__ == "__main__":
     # Run the tests
