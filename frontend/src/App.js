@@ -1461,6 +1461,32 @@ const AdminPanel = () => {
     }
   };
 
+  const handleLogoUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setLogoUploading(true);
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const logoData = {
+            logo_data: e.target.result,
+            logo_name: file.name
+          };
+          
+          const response = await axios.put(`${API}/settings/logo`, logoData);
+          setCurrentLogo(response.data);
+          alert("Logo updated successfully!");
+        } catch (error) {
+          console.error("Error uploading logo:", error);
+          alert("Error uploading logo. Please try again.");
+        } finally {
+          setLogoUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const createSection = async (e) => {
     e.preventDefault();
     try {
