@@ -3,9 +3,6 @@ import "./App.css";
 import axios from "axios";
 import { BrowserRouter, Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 
-// Logo base64 data - Replace this with your actual logo
-const LOGO_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="; // Replace this placeholder with your actual logo base64
-
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
@@ -107,48 +104,47 @@ const PublicLayout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white arabic-content">
       {/* Public Header */}
       <header className="bg-gradient-to-r from-black via-red-900 to-black border-b border-red-800 shadow-lg">
         <div className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center space-x-4">
+            <Link to="/" className="flex items-center space-x-4 space-x-reverse">
               {/* Dynamic Logo */}
               <div className="w-16 h-16 bg-black rounded-lg flex items-center justify-center overflow-hidden border border-gray-600">
                 {siteLogo?.logo_data ? (
                   <img
                     src={siteLogo.logo_data}
-                    alt="Site Logo"
+                    alt="شعار الموقع"
                     className="w-full h-full object-contain"
                   />
                 ) : (
-                  /* Temporary placeholder - will be replaced with actual logo */
                   <div className="text-center">
                     <div className="text-gray-300 text-xs font-arabic">فرسان</div>
                     <div className="text-gray-300 text-xs">العقيدة</div>
                   </div>
                 )}
               </div>
-              <div className="text-2xl md:text-3xl font-bold tracking-tight">
-                <span className="text-red-500">Foursan</span>
-                <span className="text-white"> al </span>
-                <span className="text-red-500">aQida</span>
+              <div className="text-2xl md:text-3xl font-bold tracking-tight arabic-title">
+                <span className="text-red-500">فرسان</span>
+                <span className="text-white"> </span>
+                <span className="text-red-500">العقيدة</span>
               </div>
             </Link>
-            <div className="flex items-center space-x-6">
-              <nav className="hidden md:flex space-x-8">
+            <div className="flex items-center space-x-6 space-x-reverse">
+              <nav className="hidden md:flex space-x-8 space-x-reverse">
                 <Link to="/" className="text-lg hover:text-red-400 transition-colors font-medium">
-                  Home
+                  الرئيسية
                 </Link>
                 {sections.length > 0 && (
                   <div className="relative group">
                     <span className="text-lg hover:text-red-400 transition-colors font-medium cursor-pointer flex items-center">
-                      Sections 
-                      <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      الأقسام
+                      <svg className="mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </span>
-                    <div className="absolute top-full left-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-56 z-10 mt-1">
+                    <div className="absolute top-full right-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-56 z-10 mt-1">
                       {sections.map((section) => (
                         <Link 
                           key={section.id} 
@@ -167,10 +163,10 @@ const PublicLayout = ({ children }) => {
               </nav>
               
               {/* User Authentication */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 space-x-reverse">
                 {user ? (
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-4 space-x-reverse">
+                    <div className="flex items-center space-x-2 space-x-reverse">
                       {user.profile_picture && (
                         <img 
                           src={user.profile_picture} 
@@ -178,25 +174,25 @@ const PublicLayout = ({ children }) => {
                           className="w-8 h-8 rounded-full object-cover"
                         />
                       )}
-                      <span className="text-sm font-medium">Hi, {user.full_name}!</span>
+                      <span className="text-sm font-medium">مرحباً، {user.full_name}!</span>
                     </div>
                     <Link to="/profile" className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition-colors">
-                      Profile
+                      الملف الشخصي
                     </Link>
                     <button 
                       onClick={logout}
                       className="text-sm bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg transition-colors"
                     >
-                      Logout
+                      تسجيل الخروج
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-3 space-x-reverse">
                     <Link to="/login" className="text-sm hover:text-red-400 transition-colors">
-                      Login
+                      تسجيل الدخول
                     </Link>
                     <Link to="/register" className="text-sm bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
-                      Register
+                      إنشاء حساب
                     </Link>
                   </div>
                 )}
@@ -209,19 +205,19 @@ const PublicLayout = ({ children }) => {
       {/* Mobile Navigation */}
       <div className="md:hidden bg-gray-900 border-b border-gray-700">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 justify-center">
             <Link to="/" className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-              Home
+              الرئيسية
             </Link>
             {sections.length > 0 && (
               <details className="relative">
                 <summary className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer list-none flex items-center">
-                  Sections
-                  <svg className="ml-1 w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  الأقسام
+                  <svg className="mr-1 w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </summary>
-                <div className="absolute top-full left-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl min-w-56 z-10 mt-1">
+                <div className="absolute top-full right-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl min-w-56 z-10 mt-1">
                   {sections.map((section) => (
                     <Link 
                       key={section.id} 
@@ -248,32 +244,31 @@ const PublicLayout = ({ children }) => {
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <div className="flex items-center space-x-3 mb-4">
+              <div className="flex items-center space-x-3 space-x-reverse mb-4">
                 <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center overflow-hidden border border-gray-600">
                   {siteLogo?.logo_data ? (
                     <img
                       src={siteLogo.logo_data}
-                      alt="Site Logo"
+                      alt="شعار الموقع"
                       className="w-full h-full object-contain"
                     />
                   ) : (
-                    /* Temporary placeholder for logo */
                     <div className="text-center">
                       <div className="text-gray-300 text-xs">فرسان</div>
                       <div className="text-gray-300 text-xs">العقيدة</div>
                     </div>
                   )}
                 </div>
-                <h3 className="text-xl font-bold">
-                  <span className="text-red-500">Foursan</span>
-                  <span className="text-white"> al </span>
-                  <span className="text-red-500">aQida</span>
+                <h3 className="text-xl font-bold arabic-title">
+                  <span className="text-red-500">فرسان</span>
+                  <span className="text-white"> </span>
+                  <span className="text-red-500">العقيدة</span>
                 </h3>
               </div>
-              <p className="text-gray-400">مقالات • دراسات • ردود - Quality journalism and editorial content.</p>
+              <p className="text-gray-400">منصة إسلامية لنشر المقالات العقدية والردود على المخالفين ومناقشة القضايا المعاصرة</p>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4 text-red-500">Categories</h4>
+              <h4 className="text-lg font-semibold mb-4 text-red-500">الأقسام</h4>
               <div className="space-y-2">
                 {sections.slice(0, 6).map((section) => (
                   <Link 
@@ -287,14 +282,15 @@ const PublicLayout = ({ children }) => {
               </div>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4 text-red-500">About</h4>
+              <h4 className="text-lg font-semibold mb-4 text-red-500">عن الموقع</h4>
               <p className="text-gray-400 text-sm">
-                RedBlackNews is your trusted source for quality articles and editorial content across various topics and interests.
+                فرسان العقيدة منصة إسلامية متخصصة في نشر المقالات العقدية والفقهية والردود العلمية على الشبهات والمخالفات، 
+                مع التركيز على القضايا المعاصرة من منظور إسلامي أصيل.
               </p>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
-            <p>&copy; 2025 RedBlackNews. All rights reserved.</p>
+            <p>&copy; ٢٠٢٥ فرسان العقيدة. جميع الحقوق محفوظة.</p>
           </div>
         </div>
       </footer>
@@ -333,7 +329,7 @@ const HomePage = () => {
 
   const getSectionName = (sectionId) => {
     const section = sections.find(s => s.id === sectionId);
-    return section ? section.name : "General";
+    return section ? section.name : "عام";
   };
 
   const getArticlesBySection = (sectionId) => {
@@ -345,8 +341,8 @@ const HomePage = () => {
       <PublicLayout>
         <div className="container mx-auto px-4 py-16 text-center">
           <div className="animate-pulse">
-            <div className="text-6xl mb-4">📰</div>
-            <p className="text-gray-400">Loading latest articles...</p>
+            <div className="text-6xl mb-4">📖</div>
+            <p className="text-gray-400">جارٍ تحميل أحدث المقالات...</p>
           </div>
         </div>
       </PublicLayout>
@@ -359,12 +355,12 @@ const HomePage = () => {
       <div className="hero-gradient py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              Latest <span className="text-red-500">News</span><br />
-              & <span className="text-red-500">Articles</span>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight arabic-title">
+              أحدث <span className="text-red-500">المقالات</span><br />
+              <span className="text-red-500">الإسلامية</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto">
-              Stay informed with our quality journalism and editorial content
+              منصة علمية لنشر المقالات العقدية والردود على الشبهات ومناقشة القضايا المعاصرة
             </p>
           </div>
 
@@ -375,7 +371,7 @@ const HomePage = () => {
                 <Link
                   key={article.id}
                   to={`/article/${article.id}`}
-                  className={`bg-gray-900 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300 group shadow-2xl ${
+                  className={`bg-gray-900 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300 group shadow-lg article-card ${
                     index === 0 ? 'lg:col-span-2 lg:row-span-2' : ''
                   }`}
                 >
@@ -389,30 +385,31 @@ const HomePage = () => {
                     />
                   )}
                   <div className={`p-6 ${index === 0 ? 'lg:p-8' : ''}`}>
-                    <div className="text-red-500 text-sm font-semibold mb-2 uppercase tracking-wide">
-                      {getSectionName(article.section_id)}
+                    <div className="flex items-center text-sm text-red-500 mb-3">
+                      <span className="font-medium">{getSectionName(article.section_id)}</span>
+                      <span className="mx-2">•</span>
+                      <span>{new Date(article.created_at).toLocaleDateString('ar-SA')}</span>
                     </div>
-                    <h3 className={`font-bold mb-3 group-hover:text-red-400 transition-colors line-clamp-2 ${
-                      index === 0 ? 'text-2xl lg:text-3xl' : 'text-xl'
+                    <h3 className={`font-bold mb-3 group-hover:text-red-400 transition-colors arabic-title ${
+                      index === 0 ? 'text-2xl lg:text-3xl mb-4' : 'text-xl'
                     }`}>
                       {article.title}
                     </h3>
-                    <p className={`text-gray-400 line-clamp-3 mb-4 ${
-                      index === 0 ? 'text-base' : 'text-sm'
+                    <p className={`text-gray-400 mb-4 ${
+                      index === 0 ? 'text-lg lg:text-xl mb-6' : 'line-clamp-3'
                     }`}>
-                      {article.content.slice(0, index === 0 ? 200 : 120)}...
+                      {index === 0 
+                        ? article.content.slice(0, 200) + '...'
+                        : article.content.slice(0, 100) + '...'
+                      }
                     </p>
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs text-gray-500">
-                        <span className="font-medium">{article.author}</span>
-                        <span className="mx-2">•</span>
-                        <span>{new Date(article.created_at).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex items-center space-x-1 text-gray-400">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span className="font-medium">{article.author}</span>
+                      <div className="flex items-center space-x-1 space-x-reverse">
+                        <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
                         </svg>
-                        <span className="text-xs">{article.likes_count || 0}</span>
+                        <span>{article.likes_count}</span>
                       </div>
                     </div>
                   </div>
@@ -423,111 +420,132 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Sections Grid */}
-      <div className="container mx-auto px-4 py-16">
-        <h2 className="text-4xl font-bold mb-12 text-center">Explore by <span className="text-red-500">Category</span></h2>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {sections.map((section) => {
-            const sectionArticles = getArticlesBySection(section.id);
-            if (sectionArticles.length === 0) return null;
-            
-            return (
-              <div key={section.id} className="bg-gray-900 rounded-xl p-8 hover:bg-gray-800 transition-colors">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold text-red-500">{section.name}</h3>
-                  <Link 
-                    to={`/section/${section.id}`}
-                    className="text-gray-400 hover:text-red-400 text-sm font-medium"
-                  >
-                    View All ({sectionArticles.length})
-                  </Link>
-                </div>
-                
-                {section.description && (
-                  <p className="text-gray-400 mb-6">{section.description}</p>
-                )}
-                
-                <div className="space-y-4">
-                  {sectionArticles.slice(0, 3).map((article) => (
-                    <Link
-                      key={article.id}
-                      to={`/article/${article.id}`}
-                      className="flex items-start space-x-4 group"
-                    >
-                      {article.image_data && (
-                        <img
-                          src={article.image_data}
-                          alt={article.title}
-                          className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
-                        />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold group-hover:text-red-400 transition-colors line-clamp-2">
-                          {article.title}
-                        </h4>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {article.author} • {new Date(article.created_at).toLocaleDateString()}
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {articles.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-8xl mb-6">📝</div>
-            <h3 className="text-3xl font-bold mb-4">No articles published yet</h3>
-            <p className="text-gray-400 text-lg">Check back soon for new content!</p>
+      {/* Section Categories */}
+      {sections.length > 0 && (
+        <div className="container mx-auto px-4 py-16">
+          <h2 className="text-4xl font-bold text-center mb-12 arabic-title">
+            تصفح حسب <span className="text-red-500">الأقسام</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {sections.map((section) => {
+              const sectionArticles = getArticlesBySection(section.id);
+              return (
+                <Link
+                  key={section.id}
+                  to={`/section/${section.id}`}
+                  className="bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition-all duration-300 group border border-gray-800 hover:border-red-500"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold group-hover:text-red-400 transition-colors">
+                      {section.name}
+                    </h3>
+                    <span className="bg-red-600 text-white text-sm px-3 py-1 rounded-full">
+                      {sectionArticles.length}
+                    </span>
+                  </div>
+                  {section.description && (
+                    <p className="text-gray-400 mb-4 line-clamp-3">
+                      {section.description}
+                    </p>
+                  )}
+                  <div className="flex items-center text-red-400 font-medium">
+                    <span>تصفح المقالات</span>
+                    <svg className="w-4 h-4 mr-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Recent Articles */}
+      {articles.length > 3 && (
+        <div className="container mx-auto px-4 py-16">
+          <h2 className="text-4xl font-bold text-center mb-12 arabic-title">
+            أحدث <span className="text-red-500">المقالات</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {articles.slice(3, 12).map((article) => (
+              <Link
+                key={article.id}
+                to={`/article/${article.id}`}
+                className="bg-gray-900 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300 group shadow-lg article-card"
+              >
+                {article.image_data && (
+                  <img
+                    src={article.image_data}
+                    alt={article.title}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                )}
+                <div className="p-6">
+                  <div className="flex items-center text-sm text-red-500 mb-3">
+                    <span className="font-medium">{getSectionName(article.section_id)}</span>
+                    <span className="mx-2">•</span>
+                    <span>{new Date(article.created_at).toLocaleDateString('ar-SA')}</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-red-400 transition-colors line-clamp-2 arabic-title">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-400 line-clamp-3 mb-4">
+                    {article.content.slice(0, 120)}...
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span className="font-medium">{article.author}</span>
+                    <div className="flex items-center space-x-1 space-x-reverse">
+                      <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                      </svg>
+                      <span>{article.likes_count}</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {articles.length === 0 && (
+        <div className="container mx-auto px-4 py-32 text-center">
+          <div className="text-8xl mb-8">📚</div>
+          <h2 className="text-4xl font-bold mb-4 arabic-title">لا توجد مقالات بعد</h2>
+          <p className="text-xl text-gray-400 mb-8">تابعونا قريباً لنشر أولى المقالات والدراسات الإسلامية</p>
+        </div>
+      )}
     </PublicLayout>
   );
 };
 
 const ArticlePage = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const [article, setArticle] = useState(null);
-  const [sections, setSections] = useState([]);
-  const [relatedArticles, setRelatedArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [section, setSection] = useState(null);
 
   useEffect(() => {
-    fetchData();
+    fetchArticle();
   }, [id]);
 
-  const fetchData = async () => {
+  const fetchArticle = async () => {
     try {
-      const [articleRes, sectionsRes, allArticlesRes] = await Promise.all([
-        axios.get(`${API}/articles/${id}`),
-        axios.get(`${API}/sections`),
-        axios.get(`${API}/articles`)
-      ]);
+      const response = await axios.get(`${API}/articles/${id}`);
+      setArticle(response.data);
       
-      const currentArticle = articleRes.data;
-      setArticle(currentArticle);
-      setSections(sectionsRes.data);
-      
-      // Get related articles from same section, excluding current article
-      const related = allArticlesRes.data
-        .filter(a => a.section_id === currentArticle.section_id && a.id !== currentArticle.id)
-        .slice(0, 3);
-      setRelatedArticles(related);
+      // Get section info
+      const sectionsResponse = await axios.get(`${API}/sections`);
+      const sectionInfo = sectionsResponse.data.find(s => s.id === response.data.section_id);
+      setSection(sectionInfo);
     } catch (error) {
       console.error("Error fetching article:", error);
     } finally {
       setLoading(false);
     }
-  };
-
-  const getSectionName = (sectionId) => {
-    const section = sections.find(s => s.id === sectionId);
-    return section ? section.name : "General";
   };
 
   if (loading) {
@@ -536,7 +554,7 @@ const ArticlePage = () => {
         <div className="container mx-auto px-4 py-16 text-center">
           <div className="animate-pulse">
             <div className="text-6xl mb-4">📖</div>
-            <p className="text-gray-400">Loading article...</p>
+            <p className="text-gray-400">جارٍ تحميل المقال...</p>
           </div>
         </div>
       </PublicLayout>
@@ -547,11 +565,11 @@ const ArticlePage = () => {
     return (
       <PublicLayout>
         <div className="container mx-auto px-4 py-16 text-center">
-          <div className="text-8xl mb-6">❌</div>
-          <h2 className="text-3xl font-bold mb-4">Article Not Found</h2>
-          <p className="text-gray-400 mb-6">The article you're looking for doesn't exist.</p>
+          <div className="text-8xl mb-6">🔍</div>
+          <h2 className="text-4xl font-bold mb-4">المقال غير موجود</h2>
+          <p className="text-gray-400 mb-8">المقال الذي تبحث عنه غير متوفر أو تم حذفه</p>
           <Link to="/" className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors">
-            Back to Home
+            العودة للرئيسية
           </Link>
         </div>
       </PublicLayout>
@@ -561,99 +579,100 @@ const ArticlePage = () => {
   return (
     <PublicLayout>
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <nav className="mb-8">
-            <Link to="/" className="text-red-500 hover:text-red-400 font-medium">
-              ← Back to Articles
-            </Link>
-          </nav>
-          
-          <article>
-            <header className="mb-10">
-              <div className="text-red-500 text-sm font-semibold mb-3 uppercase tracking-wide">
-                {getSectionName(article.section_id)}
-              </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">{article.title}</h1>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-gray-400 border-l-4 border-red-500 pl-4">
-                  <div>
-                    <div className="font-semibold text-white text-lg">By {article.author}</div>
-                    <div className="text-sm">
-                      Published {new Date(article.created_at).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                      {article.updated_at !== article.created_at && (
-                        <span> • Updated {new Date(article.updated_at).toLocaleDateString()}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <LikeButton article={article} />
-              </div>
-            </header>
-
-            {article.image_data && (
-              <div className="mb-10">
-                <img
-                  src={article.image_data}
-                  alt={article.title}
-                  className="w-full h-64 md:h-96 object-cover rounded-xl shadow-2xl"
-                />
-              </div>
+        {/* Breadcrumb */}
+        <nav className="mb-8 text-sm">
+          <div className="flex items-center space-x-2 space-x-reverse text-gray-400">
+            <Link to="/" className="hover:text-red-400 transition-colors">الرئيسية</Link>
+            <span>«</span>
+            {section && (
+              <>
+                <Link to={`/section/${section.id}`} className="hover:text-red-400 transition-colors">
+                  {section.name}
+                </Link>
+                <span>«</span>
+              </>
             )}
+            <span className="text-white">{article.title}</span>
+          </div>
+        </nav>
 
-            <div className="prose prose-invert prose-xl max-w-none">
-              {article.content.split('\n').map((paragraph, index) => (
-                <p key={index} className="mb-8 text-gray-300 leading-relaxed text-lg">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </article>
-
-          {/* Comments Section */}
-          <CommentsSection articleId={article.id} />
-
-          {/* Related Articles */}
-          {relatedArticles.length > 0 && (
-            <div className="mt-16 pt-8 border-t border-gray-800">
-              <h3 className="text-2xl font-bold mb-6">Related Articles</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((relatedArticle) => (
-                  <Link
-                    key={relatedArticle.id}
-                    to={`/article/${relatedArticle.id}`}
-                    className="bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-colors group"
-                  >
-                    {relatedArticle.image_data && (
-                      <img
-                        src={relatedArticle.image_data}
-                        alt={relatedArticle.title}
-                        className="w-full h-32 object-cover group-hover:opacity-90 transition-opacity"
-                      />
-                    )}
-                    <div className="p-4">
-                      <h4 className="font-bold mb-2 group-hover:text-red-400 transition-colors line-clamp-2">
-                        {relatedArticle.title}
-                      </h4>
-                      <div className="text-xs text-gray-500">
-                        {relatedArticle.author} • {new Date(relatedArticle.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
+        {/* Article Content */}
+        <article className="max-w-4xl mx-auto">
+          {/* Article Header */}
+          <header className="mb-8">
+            <div className="flex items-center text-sm text-red-500 mb-4">
+              {section && (
+                <>
+                  <Link to={`/section/${section.id}`} className="font-medium hover:text-red-400 transition-colors">
+                    {section.name}
                   </Link>
-                ))}
+                  <span className="mx-2">•</span>
+                </>
+              )}
+              <span>{new Date(article.created_at).toLocaleDateString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight arabic-title">
+              {article.title}
+            </h1>
+            
+            <div className="flex items-center justify-between mb-6">
+              <div className="text-gray-400">
+                <span className="font-medium">الكاتب: {article.author}</span>
               </div>
+              <LikeButton article={article} />
+            </div>
+          </header>
+
+          {/* Article Image */}
+          {article.image_data && (
+            <div className="mb-8">
+              <img
+                src={article.image_data}
+                alt={article.title}
+                className="w-full max-h-96 object-cover rounded-xl shadow-lg"
+              />
             </div>
           )}
-        </div>
+
+          {/* Article Content */}
+          <div className="prose prose-lg prose-invert max-w-none mb-12 arabic-content">
+            <div 
+              className="text-lg leading-relaxed whitespace-pre-wrap"
+              style={{ textAlign: 'justify', lineHeight: '1.8' }}
+            >
+              {article.content}
+            </div>
+          </div>
+
+          {/* Article Meta */}
+          <div className="border-t border-gray-800 pt-8 mb-8">
+            <div className="flex items-center justify-between text-sm text-gray-500">
+              <div>
+                <span>تاريخ النشر: {new Date(article.created_at).toLocaleDateString('ar-SA')}</span>
+                {article.updated_at !== article.created_at && (
+                  <span className="mr-4">آخر تحديث: {new Date(article.updated_at).toLocaleDateString('ar-SA')}</span>
+                )}
+              </div>
+              <div className="flex items-center space-x-4 space-x-reverse">
+                <LikeButton article={article} />
+              </div>
+            </div>
+          </div>
+        </article>
+
+        {/* Comments Section */}
+        <CommentsSection articleId={id} />
       </div>
     </PublicLayout>
   );
 };
 
-// Comments Section Component
+// Comments Component
 const CommentsSection = ({ articleId }) => {
   const { user, isAuthenticated } = useAuth();
   const [comments, setComments] = useState([]);
@@ -691,7 +710,7 @@ const CommentsSection = ({ articleId }) => {
       setNewComment('');
     } catch (error) {
       console.error('Error submitting comment:', error);
-      alert(error.response?.data?.detail || 'Failed to post comment');
+      alert('حدث خطأ في إرسال التعليق. يرجى المحاولة مرة أخرى.');
     } finally {
       setSubmitting(false);
     }
@@ -704,24 +723,26 @@ const CommentsSection = ({ articleId }) => {
       const response = await axios.put(`${API}/comments/${commentId}`, {
         content: editContent.trim()
       });
-      setComments(comments.map(c => c.id === commentId ? response.data : c));
+      setComments(comments.map(comment => 
+        comment.id === commentId ? response.data : comment
+      ));
       setEditingComment(null);
       setEditContent('');
     } catch (error) {
       console.error('Error editing comment:', error);
-      alert(error.response?.data?.detail || 'Failed to edit comment');
+      alert('حدث خطأ في تعديل التعليق. يرجى المحاولة مرة أخرى.');
     }
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!window.confirm('Are you sure you want to delete this comment?')) return;
+    if (!window.confirm('هل أنت متأكد من حذف هذا التعليق؟')) return;
 
     try {
       await axios.delete(`${API}/comments/${commentId}`);
-      setComments(comments.filter(c => c.id !== commentId));
+      setComments(comments.filter(comment => comment.id !== commentId));
     } catch (error) {
       console.error('Error deleting comment:', error);
-      alert(error.response?.data?.detail || 'Failed to delete comment');
+      alert('حدث خطأ في حذف التعليق. يرجى المحاولة مرة أخرى.');
     }
   };
 
@@ -736,54 +757,40 @@ const CommentsSection = ({ articleId }) => {
   };
 
   return (
-    <div className="mt-16 pt-8 border-t border-gray-800">
-      <h3 className="text-2xl font-bold mb-6 flex items-center">
-        <svg className="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-        Comments ({comments.length})
-      </h3>
-
+    <div className="max-w-4xl mx-auto mt-16">
+      <h3 className="text-2xl font-bold mb-8 arabic-title">التعليقات ({comments.length})</h3>
+      
       {/* Comment Form */}
       {isAuthenticated ? (
         <form onSubmit={handleSubmitComment} className="mb-8">
-          <div className="flex items-start space-x-4">
-            {user.profile_picture && (
-              <img
-                src={user.profile_picture}
-                alt={user.full_name}
-                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-              />
-            )}
-            <div className="flex-1">
-              <textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Write a comment..."
-                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 resize-none"
-                rows={3}
-                required
-              />
-              <div className="flex justify-between items-center mt-3">
-                <span className="text-sm text-gray-400">
-                  Commenting as {user.full_name}
-                </span>
-                <button
-                  type="submit"
-                  disabled={submitting || !newComment.trim()}
-                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting ? 'Posting...' : 'Post Comment'}
-                </button>
-              </div>
+          <div className="bg-gray-900 rounded-lg p-6">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="شاركنا رأيك حول هذا المقال..."
+              rows={4}
+              className="w-full p-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 resize-none arabic-content"
+              required
+            />
+            <div className="flex justify-between items-center mt-4">
+              <span className="text-sm text-gray-400">
+                {newComment.length}/500 حرف
+              </span>
+              <button
+                type="submit"
+                disabled={submitting || !newComment.trim()}
+                className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'جارٍ الإرسال...' : 'نشر التعليق'}
+              </button>
             </div>
           </div>
         </form>
       ) : (
         <div className="mb-8 p-4 bg-gray-800 rounded-lg text-center">
-          <p className="text-gray-400 mb-3">Please login to join the conversation</p>
+          <p className="text-gray-400 mb-3">يرجى تسجيل الدخول للمشاركة في النقاش</p>
           <Link to="/login" className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-medium transition-colors">
-            Login to Comment
+            تسجيل الدخول للتعليق
           </Link>
         </div>
       )}
@@ -791,21 +798,21 @@ const CommentsSection = ({ articleId }) => {
       {/* Comments List */}
       {loading ? (
         <div className="text-center py-8">
-          <div className="animate-pulse text-gray-400">Loading comments...</div>
+          <div className="animate-pulse text-gray-400">جارٍ تحميل التعليقات...</div>
         </div>
       ) : comments.length === 0 ? (
         <div className="text-center py-8 text-gray-400">
           <svg className="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
-          <p className="text-lg font-medium">No comments yet</p>
-          <p className="text-sm">Be the first to share your thoughts!</p>
+          <p className="text-lg font-medium">لا توجد تعليقات بعد</p>
+          <p className="text-sm">كن أول من يشارك برأيه!</p>
         </div>
       ) : (
         <div className="space-y-6">
           {comments.map((comment) => (
             <div key={comment.id} className="bg-gray-900 rounded-lg p-6">
-              <div className="flex items-start space-x-4">
+              <div className="flex items-start space-x-4 space-x-reverse">
                 {comment.user_profile_picture ? (
                   <img
                     src={comment.user_profile_picture}
@@ -822,7 +829,7 @@ const CommentsSection = ({ articleId }) => {
                     <div>
                       <h4 className="font-semibold text-white">{comment.user_full_name}</h4>
                       <time className="text-sm text-gray-400">
-                        {new Date(comment.created_at).toLocaleDateString('en-US', {
+                        {new Date(comment.created_at).toLocaleDateString('ar-SA', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
@@ -830,23 +837,23 @@ const CommentsSection = ({ articleId }) => {
                           minute: '2-digit'
                         })}
                         {comment.updated_at !== comment.created_at && (
-                          <span className="ml-2">(edited)</span>
+                          <span className="mr-2">(تم التعديل)</span>
                         )}
                       </time>
                     </div>
                     {user && user.id === comment.user_id && (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 space-x-reverse">
                         <button
                           onClick={() => startEditing(comment)}
                           className="text-blue-400 hover:text-blue-300 text-sm"
                         >
-                          Edit
+                          تعديل
                         </button>
                         <button
                           onClick={() => handleDeleteComment(comment.id)}
                           className="text-red-400 hover:text-red-300 text-sm"
                         >
-                          Delete
+                          حذف
                         </button>
                       </div>
                     )}
@@ -857,26 +864,26 @@ const CommentsSection = ({ articleId }) => {
                       <textarea
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
-                        className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 resize-none"
+                        className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 resize-none arabic-content"
                         rows={3}
                       />
-                      <div className="flex space-x-2">
+                      <div className="flex space-x-2 space-x-reverse">
                         <button
                           onClick={() => handleEditComment(comment.id)}
                           className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-colors"
                         >
-                          Save
+                          حفظ
                         </button>
                         <button
                           onClick={cancelEditing}
                           className="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-sm transition-colors"
                         >
-                          Cancel
+                          إلغاء
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+                    <p className="text-gray-300 leading-relaxed whitespace-pre-wrap arabic-content">{comment.content}</p>
                   )}
                 </div>
               </div>
@@ -897,7 +904,7 @@ const LikeButton = ({ article }) => {
 
   const handleLike = async () => {
     if (!isAuthenticated) {
-      alert("Please login to like articles!");
+      alert("يرجى تسجيل الدخول للإعجاب بالمقالات!");
       return;
     }
 
@@ -923,11 +930,11 @@ const LikeButton = ({ article }) => {
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 space-x-reverse">
       <button
         onClick={handleLike}
         disabled={loading}
-        className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center space-x-2 space-x-reverse px-4 py-2 rounded-lg transition-colors ${
           isLiked 
             ? 'bg-red-600 hover:bg-red-700 text-white' 
             : 'bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white'
@@ -939,7 +946,7 @@ const LikeButton = ({ article }) => {
         <span>{likesCount}</span>
       </button>
       {!isAuthenticated && (
-        <span className="text-xs text-gray-500">Login to like</span>
+        <span className="text-xs text-gray-500">سجل دخولك للإعجاب</span>
       )}
     </div>
   );
@@ -978,12 +985,12 @@ const RegisterPage = () => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords don't match");
+      setError("كلمات المرور غير متطابقة");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
+      setError("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
       return;
     }
 
@@ -991,12 +998,11 @@ const RegisterPage = () => {
     setError('');
 
     try {
-      // Trim whitespace from inputs to prevent login issues later
       const registerData = {
         username: formData.username.trim(),
-        email: formData.email.trim().toLowerCase(), // Also normalize email to lowercase
+        email: formData.email.trim().toLowerCase(),
         full_name: formData.full_name.trim(),
-        password: formData.password, // Don't trim password as it might be intentional
+        password: formData.password,
         profile_picture: formData.profile_picture
       };
 
@@ -1008,14 +1014,14 @@ const RegisterPage = () => {
       if (error.response?.status === 400) {
         const detail = error.response?.data?.detail;
         if (detail?.includes('Username already')) {
-          setError('This username is already taken. Please choose a different one.');
+          setError('اسم المستخدم مُستخدم بالفعل. يرجى اختيار اسم آخر.');
         } else if (detail?.includes('Email already')) {
-          setError('This email is already registered. Please use a different email or try logging in.');
+          setError('البريد الإلكتروني مُسجل بالفعل. يرجى استخدام بريد آخر أو تسجيل الدخول.');
         } else {
-          setError(detail || 'Registration failed');
+          setError(detail || 'فشل في التسجيل');
         }
       } else {
-        setError('Registration failed. Please try again.');
+        setError('فشل في التسجيل. يرجى المحاولة مرة أخرى.');
       }
     } finally {
       setLoading(false);
@@ -1026,48 +1032,48 @@ const RegisterPage = () => {
     <PublicLayout>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto bg-gray-900 rounded-xl p-8 shadow-2xl">
-          <h1 className="text-3xl font-bold mb-8 text-center text-red-500">Create Account</h1>
+          <h1 className="text-3xl font-bold mb-8 text-center text-red-500 arabic-title">إنشاء حساب جديد</h1>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Username</label>
+              <label className="block text-sm font-medium mb-2">اسم المستخدم</label>
               <input
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData({...formData, username: e.target.value})}
-                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                placeholder="Choose a unique username"
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 ltr"
+                placeholder="اختر اسم مستخدم فريد"
                 required
               />
-              <p className="text-xs text-gray-400 mt-1">Remember this exactly - it's case-sensitive for login</p>
+              <p className="text-xs text-gray-400 mt-1">تذكر هذا الاسم بالضبط - حساس لحالة الأحرف</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="block text-sm font-medium mb-2">البريد الإلكتروني</label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 ltr"
                 placeholder="your.email@example.com"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Full Name</label>
+              <label className="block text-sm font-medium mb-2">الاسم الكامل</label>
               <input
                 type="text"
                 value={formData.full_name}
                 onChange={(e) => setFormData({...formData, full_name: e.target.value})}
                 className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                placeholder="Your full name"
+                placeholder="اسمك الكامل"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Profile Picture (Optional)</label>
+              <label className="block text-sm font-medium mb-2">الصورة الشخصية (اختياري)</label>
               <input
                 type="file"
                 accept="image/*"
@@ -1077,34 +1083,34 @@ const RegisterPage = () => {
               {formData.profile_picture && (
                 <img
                   src={formData.profile_picture}
-                  alt="Profile preview"
+                  alt="معاينة الصورة"
                   className="mt-2 w-20 h-20 rounded-full object-cover"
                 />
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
+              <label className="block text-sm font-medium mb-2">كلمة المرور</label>
               <input
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                placeholder="Choose a strong password"
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 ltr"
+                placeholder="اختر كلمة مرور قوية"
                 required
                 minLength="6"
               />
-              <p className="text-xs text-gray-400 mt-1">At least 6 characters - remember this exactly for login</p>
+              <p className="text-xs text-gray-400 mt-1">6 أحرف على الأقل - تذكرها بالضبط لتسجيل الدخول</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Confirm Password</label>
+              <label className="block text-sm font-medium mb-2">تأكيد كلمة المرور</label>
               <input
                 type="password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                placeholder="Repeat your password"
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 ltr"
+                placeholder="أعد كتابة كلمة المرور"
                 required
               />
             </div>
@@ -1118,13 +1124,13 @@ const RegisterPage = () => {
               disabled={loading}
               className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50"
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
+              {loading ? 'جارٍ إنشاء الحساب...' : 'إنشاء حساب'}
             </button>
           </form>
 
           <div className="text-center mt-6">
-            <span className="text-gray-400">Already have an account? </span>
-            <Link to="/login" className="text-red-500 hover:text-red-400">Login here</Link>
+            <span className="text-gray-400">لديك حساب بالفعل؟ </span>
+            <Link to="/login" className="text-red-500 hover:text-red-400">سجل دخولك هنا</Link>
           </div>
         </div>
       </div>
@@ -1147,7 +1153,6 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
 
-    // Trim whitespace from inputs to prevent login issues
     const cleanedFormData = {
       username: formData.username.trim(),
       password: formData.password.trim()
@@ -1160,9 +1165,9 @@ const LoginPage = () => {
     } catch (error) {
       console.error('Login error:', error);
       if (error.response?.status === 401) {
-        setError('Invalid username or password. Please check your credentials and try again.');
+        setError('اسم المستخدم أو كلمة المرور غير صحيحة. يرجى التحقق من البيانات والمحاولة مرة أخرى.');
       } else {
-        setError(error.response?.data?.detail || 'Login failed. Please try again.');
+        setError(error.response?.data?.detail || 'فشل في تسجيل الدخول. يرجى المحاولة مرة أخرى.');
       }
     } finally {
       setLoading(false);
@@ -1173,40 +1178,40 @@ const LoginPage = () => {
     <PublicLayout>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto bg-gray-900 rounded-xl p-8 shadow-2xl">
-          <h1 className="text-3xl font-bold mb-8 text-center text-red-500">Login</h1>
+          <h1 className="text-3xl font-bold mb-8 text-center text-red-500 arabic-title">تسجيل الدخول</h1>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Username</label>
+              <label className="block text-sm font-medium mb-2">اسم المستخدم</label>
               <input
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData({...formData, username: e.target.value})}
-                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                placeholder="Enter your username"
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 ltr"
+                placeholder="أدخل اسم المستخدم"
                 required
               />
-              <p className="text-xs text-gray-400 mt-1">Username is case-sensitive</p>
+              <p className="text-xs text-gray-400 mt-1">اسم المستخدم حساس لحالة الأحرف</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
+              <label className="block text-sm font-medium mb-2">كلمة المرور</label>
               <input
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                placeholder="Enter your password"
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 ltr"
+                placeholder="أدخل كلمة المرور"
                 required
               />
-              <p className="text-xs text-gray-400 mt-1">Password is case-sensitive</p>
+              <p className="text-xs text-gray-400 mt-1">كلمة المرور حساسة لحالة الأحرف</p>
             </div>
 
             {error && (
               <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-3">
                 <div className="text-red-400 text-sm text-center">{error}</div>
                 <div className="text-xs text-gray-400 text-center mt-2">
-                  Make sure your username and password match exactly what you used during registration.
+                  تأكد من أن اسم المستخدم وكلمة المرور تطابق بالضبط ما استخدمته أثناء التسجيل.
                 </div>
               </div>
             )}
@@ -1216,13 +1221,13 @@ const LoginPage = () => {
               disabled={loading}
               className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'جارٍ تسجيل الدخول...' : 'تسجيل الدخول'}
             </button>
           </form>
 
           <div className="text-center mt-6">
-            <span className="text-gray-400">Don't have an account? </span>
-            <Link to="/register" className="text-red-500 hover:text-red-400">Register here</Link>
+            <span className="text-gray-400">ليس لديك حساب؟ </span>
+            <Link to="/register" className="text-red-500 hover:text-red-400">أنشئ حساباً هنا</Link>
           </div>
         </div>
       </div>
@@ -1245,7 +1250,7 @@ const ProfilePage = () => {
       <PublicLayout>
         <div className="container mx-auto px-4 py-12 text-center">
           <div className="text-6xl mb-4">👤</div>
-          <p className="text-gray-400">Loading profile...</p>
+          <p className="text-gray-400">جارٍ تحميل الملف الشخصي...</p>
         </div>
       </PublicLayout>
     );
@@ -1255,7 +1260,7 @@ const ProfilePage = () => {
     <PublicLayout>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto bg-gray-900 rounded-xl p-8 shadow-2xl">
-          <h1 className="text-3xl font-bold mb-8 text-center text-red-500">My Profile</h1>
+          <h1 className="text-3xl font-bold mb-8 text-center text-red-500 arabic-title">ملفي الشخصي</h1>
           
           <div className="text-center mb-8">
             {user.profile_picture ? (
@@ -1275,19 +1280,19 @@ const ProfilePage = () => {
 
           <div className="space-y-4">
             <div className="bg-gray-800 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
-              <p className="text-white">{user.email}</p>
+              <label className="block text-sm font-medium text-gray-400 mb-1">البريد الإلكتروني</label>
+              <p className="text-white ltr">{user.email}</p>
             </div>
             
             <div className="bg-gray-800 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-400 mb-1">Member Since</label>
-              <p className="text-white">{new Date(user.created_at).toLocaleDateString()}</p>
+              <label className="block text-sm font-medium text-gray-400 mb-1">عضو منذ</label>
+              <p className="text-white">{new Date(user.created_at).toLocaleDateString('ar-SA')}</p>
             </div>
           </div>
 
           <div className="text-center mt-8">
             <Link to="/" className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors">
-              Back to Articles
+              العودة للمقالات
             </Link>
           </div>
         </div>
@@ -1329,7 +1334,7 @@ const SectionPage = () => {
         <div className="container mx-auto px-4 py-16 text-center">
           <div className="animate-pulse">
             <div className="text-6xl mb-4">📂</div>
-            <p className="text-gray-400">Loading section...</p>
+            <p className="text-gray-400">جارٍ تحميل القسم...</p>
           </div>
         </div>
       </PublicLayout>
@@ -1341,23 +1346,23 @@ const SectionPage = () => {
       <div className="container mx-auto px-4 py-8">
         <nav className="mb-8">
           <Link to="/" className="text-red-500 hover:text-red-400 font-medium">
-            ← Back to Home
+            → العودة للرئيسية
           </Link>
         </nav>
 
         <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold mb-4">{currentSection?.name || "Section"}</h1>
+          <h1 className="text-5xl font-bold mb-4 arabic-title">{currentSection?.name || "القسم"}</h1>
           {currentSection?.description && (
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">{currentSection.description}</p>
           )}
-          <div className="text-red-500 font-semibold mt-4">{articles.length} Articles</div>
+          <div className="text-red-500 font-semibold mt-4">{articles.length} مقال</div>
         </div>
 
         {articles.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-8xl mb-6">📰</div>
-            <h3 className="text-3xl font-bold mb-4">No articles in this section yet</h3>
-            <p className="text-gray-400 text-lg">Check back soon for new content!</p>
+            <h3 className="text-3xl font-bold mb-4">لا توجد مقالات في هذا القسم بعد</h3>
+            <p className="text-gray-400 text-lg">تابعونا قريباً لإضافة محتوى جديد!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -1365,7 +1370,7 @@ const SectionPage = () => {
               <Link
                 key={article.id}
                 to={`/article/${article.id}`}
-                className="bg-gray-900 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300 group shadow-lg"
+                className="bg-gray-900 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300 group shadow-lg article-card"
               >
                 {article.image_data && (
                   <img
@@ -1375,7 +1380,7 @@ const SectionPage = () => {
                   />
                 )}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-red-400 transition-colors line-clamp-2">
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-red-400 transition-colors line-clamp-2 arabic-title">
                     {article.title}
                   </h3>
                   <p className="text-gray-400 line-clamp-3 mb-4">
@@ -1384,7 +1389,7 @@ const SectionPage = () => {
                   <div className="flex items-center text-sm text-gray-500">
                     <span className="font-medium">{article.author}</span>
                     <span className="mx-2">•</span>
-                    <span>{new Date(article.created_at).toLocaleDateString()}</span>
+                    <span>{new Date(article.created_at).toLocaleDateString('ar-SA')}</span>
                   </div>
                 </div>
               </Link>
@@ -1407,7 +1412,7 @@ const AdminLogin = ({ onLogin }) => {
       onLogin();
       setError("");
     } else {
-      setError("Invalid passcode. Access denied.");
+      setError("رمز المرور غير صحيح. تم رفض الدخول.");
       setPasscode("");
     }
   };
@@ -1416,17 +1421,17 @@ const AdminLogin = ({ onLogin }) => {
     <div className="min-h-screen bg-black text-white flex items-center justify-center">
       <div className="bg-gray-900 rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-red-500">Admin Access</h1>
-          <p className="text-gray-400">Enter passcode to continue</p>
+          <h1 className="text-3xl font-bold mb-2 text-red-500 arabic-title">دخول الإدارة</h1>
+          <p className="text-gray-400">أدخل رمز المرور للمتابعة</p>
         </div>
         
         <form onSubmit={handleSubmit}>
           <input
             type="password"
-            placeholder="Enter Admin Passcode"
+            placeholder="أدخل رمز مرور الإدارة"
             value={passcode}
             onChange={(e) => setPasscode(e.target.value)}
-            className="w-full p-4 mb-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+            className="w-full p-4 mb-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 focus:ring-1 focus:ring-red-500 ltr"
             required
           />
           
@@ -1438,13 +1443,13 @@ const AdminLogin = ({ onLogin }) => {
             type="submit"
             className="w-full bg-red-600 hover:bg-red-700 py-4 rounded-lg font-semibold transition-colors"
           >
-            Access Admin Panel
+            دخول لوحة الإدارة
           </button>
         </form>
         
         <div className="text-center mt-6">
           <Link to="/" className="text-gray-400 hover:text-red-400 text-sm">
-            ← Back to Website
+            → العودة للموقع
           </Link>
         </div>
       </div>
@@ -1540,10 +1545,10 @@ const AdminPanel = () => {
           
           const response = await axios.put(`${API}/settings/logo`, logoData);
           setCurrentLogo(response.data);
-          alert("Logo updated successfully!");
+          alert("تم تحديث الشعار بنجاح!");
         } catch (error) {
           console.error("Error uploading logo:", error);
-          alert("Error uploading logo. Please try again.");
+          alert("خطأ في رفع الشعار. يرجى المحاولة مرة أخرى.");
         } finally {
           setLogoUploading(false);
         }
@@ -1561,7 +1566,7 @@ const AdminPanel = () => {
       fetchSections();
     } catch (error) {
       console.error("Error creating section:", error);
-      alert("Error creating section. Please try again.");
+      alert("خطأ في إنشاء القسم. يرجى المحاولة مرة أخرى.");
     }
   };
 
@@ -1581,12 +1586,12 @@ const AdminPanel = () => {
       fetchArticles();
     } catch (error) {
       console.error("Error creating article:", error);
-      alert("Error creating article. Please try again.");
+      alert("خطأ في إنشاء المقال. يرجى المحاولة مرة أخرى.");
     }
   };
 
   const deleteSection = async (sectionId) => {
-    if (window.confirm("Are you sure? This will delete all articles in this section.")) {
+    if (window.confirm("هل أنت متأكد؟ سيتم حذف جميع المقالات في هذا القسم.")) {
       try {
         await axios.delete(`${API}/sections/${sectionId}`);
         fetchSections();
@@ -1596,20 +1601,20 @@ const AdminPanel = () => {
         }
       } catch (error) {
         console.error("Error deleting section:", error);
-        alert("Error deleting section. Please try again.");
+        alert("خطأ في حذف القسم. يرجى المحاولة مرة أخرى.");
       }
     }
   };
 
   const deleteArticle = async (articleId) => {
-    if (window.confirm("Are you sure you want to delete this article?")) {
+    if (window.confirm("هل أنت متأكد من حذف هذا المقال؟")) {
       try {
         await axios.delete(`${API}/articles/${articleId}`);
         fetchArticles();
         setSelectedArticle(null);
       } catch (error) {
         console.error("Error deleting article:", error);
-        alert("Error deleting article. Please try again.");
+        alert("خطأ في حذف المقال. يرجى المحاولة مرة أخرى.");
       }
     }
   };
@@ -1625,7 +1630,7 @@ const AdminPanel = () => {
 
   const getSectionName = (sectionId) => {
     const section = sections.find(s => s.id === sectionId);
-    return section ? section.name : "Unknown Section";
+    return section ? section.name : "قسم غير معروف";
   };
 
   return (
@@ -1634,17 +1639,17 @@ const AdminPanel = () => {
       <header className="bg-red-900 border-b border-red-700 shadow-lg">
         <div className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold">Content Management System</h1>
-            <div className="flex items-center space-x-4">
-              <span className="text-red-300 text-sm">Admin Panel</span>
+            <h1 className="text-3xl font-bold arabic-title">نظام إدارة المحتوى</h1>
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <span className="text-red-300 text-sm">لوحة الإدارة</span>
               <Link to="/" className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm transition-colors">
-                View Public Site
+                عرض الموقع
               </Link>
               <button
                 onClick={() => setIsAuthenticated(false)}
                 className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition-colors"
               >
-                Logout
+                تسجيل الخروج
               </button>
             </div>
           </div>
@@ -1656,24 +1661,24 @@ const AdminPanel = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-gray-800 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-red-500">{articles.length}</div>
-              <div className="text-gray-400 text-sm">Total Articles</div>
+              <div className="text-2xl font-bold text-red-500 arabic-numbers">{articles.length}</div>
+              <div className="text-gray-400 text-sm">إجمالي المقالات</div>
             </div>
             <div className="bg-gray-800 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-red-500">{sections.length}</div>
-              <div className="text-gray-400 text-sm">Sections</div>
+              <div className="text-2xl font-bold text-red-500 arabic-numbers">{sections.length}</div>
+              <div className="text-gray-400 text-sm">الأقسام</div>
             </div>
             <div className="bg-gray-800 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-red-500">
+              <div className="text-2xl font-bold text-red-500 arabic-numbers">
                 {articles.filter(a => a.image_data).length}
               </div>
-              <div className="text-gray-400 text-sm">Articles with Images</div>
+              <div className="text-gray-400 text-sm">مقالات بصور</div>
             </div>
             <div className="bg-gray-800 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-red-500">
-                {new Date().toLocaleDateString()}
+                {new Date().toLocaleDateString('ar-SA')}
               </div>
-              <div className="text-gray-400 text-sm">Today</div>
+              <div className="text-gray-400 text-sm">اليوم</div>
             </div>
           </div>
         </div>
@@ -1682,237 +1687,172 @@ const AdminPanel = () => {
       {/* Admin Controls */}
       <div className="bg-gray-900 border-b border-gray-700">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={() => setShowAddSection(true)}
               className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
             >
-              <span className="mr-2">+</span> Add Section
+              <span className="ml-2">+</span> إضافة قسم
             </button>
             <button
               onClick={() => setShowAddArticle(true)}
               className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
             >
-              <span className="mr-2">✏️</span> Write Article
+              <span className="ml-2">✏️</span> كتابة مقال
             </button>
             <button
               onClick={() => setShowLogoManager(true)}
-              className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
+              className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
             >
-              <span className="mr-2">🎨</span> Manage Logo
+              <span className="ml-2">🖼️</span> إدارة الشعار
             </button>
           </div>
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Admin Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-900 rounded-lg p-6 sticky top-4">
-              <h2 className="text-2xl font-bold mb-6 text-red-500">Filter Content</h2>
-              <div className="space-y-3">
-                <button
-                  onClick={() => setSelectedSection("all")}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors font-medium ${
-                    selectedSection === "all" 
-                      ? "bg-red-600 text-white" 
-                      : "bg-gray-800 hover:bg-gray-700 text-gray-300"
-                  }`}
-                >
-                  All Articles ({articles.length})
-                </button>
-                {sections.map((section) => (
-                  <div key={section.id} className="flex items-center gap-2">
-                    <button
-                      onClick={() => setSelectedSection(section.id)}
-                      className={`flex-1 text-left px-4 py-3 rounded-lg transition-colors font-medium ${
-                        selectedSection === section.id 
-                          ? "bg-red-600 text-white" 
-                          : "bg-gray-800 hover:bg-gray-700 text-gray-300"
-                      }`}
-                    >
-                      {section.name} ({articles.filter(a => a.section_id === section.id).length})
-                    </button>
-                    <button
-                      onClick={() => deleteSection(section.id)}
-                      className="px-3 py-3 bg-red-800 hover:bg-red-700 rounded-lg text-sm transition-colors"
-                      title="Delete Section"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                ))}
+        {/* Section Filter */}
+        <div className="mb-8">
+          <label className="block text-sm font-medium mb-2">تصفية حسب القسم:</label>
+          <select
+            value={selectedSection}
+            onChange={(e) => setSelectedSection(e.target.value)}
+            className="bg-gray-800 border border-gray-700 text-white px-4 py-2 rounded-lg focus:border-red-500"
+          >
+            <option value="all">جميع الأقسام</option>
+            {sections.map((section) => (
+              <option key={section.id} value={section.id}>
+                {section.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Articles Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredArticles.map((article) => (
+            <div key={article.id} className="bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+              {article.image_data && (
+                <img
+                  src={article.image_data}
+                  alt={article.title}
+                  className="w-full h-48 object-cover"
+                />
+              )}
+              <div className="p-4">
+                <div className="text-sm text-red-500 mb-2">
+                  {getSectionName(article.section_id)}
+                </div>
+                <h3 className="text-lg font-bold mb-2 line-clamp-2 arabic-title">
+                  {article.title}
+                </h3>
+                <p className="text-gray-400 text-sm mb-3 line-clamp-3">
+                  {article.content.slice(0, 100)}...
+                </p>
+                <div className="text-sm text-gray-500 mb-4">
+                  بواسطة: {article.author} • {new Date(article.created_at).toLocaleDateString('ar-SA')}
+                </div>
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={() => setSelectedArticle(article)}
+                    className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-colors"
+                  >
+                    عرض
+                  </button>
+                  <button
+                    onClick={() => deleteArticle(article.id)}
+                    className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition-colors"
+                  >
+                    حذف
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Admin Main Content */}
-          <div className="lg:col-span-3">
-            {selectedArticle ? (
-              /* Article Detail View */
-              <div className="bg-gray-900 rounded-lg p-8">
+        {/* Empty State */}
+        {filteredArticles.length === 0 && (
+          <div className="text-center py-16">
+            <div className="text-8xl mb-4">📝</div>
+            <h3 className="text-2xl font-bold mb-4">لا توجد مقالات</h3>
+            <p className="text-gray-400 mb-8">ابدأ بكتابة أول مقال لك!</p>
+            <button
+              onClick={() => setShowAddArticle(true)}
+              className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
+              كتابة مقال جديد
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Sections Management */}
+      <div className="container mx-auto px-4 py-8 border-t border-gray-800">
+        <h2 className="text-2xl font-bold mb-6 arabic-title">إدارة الأقسام</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sections.map((section) => (
+            <div key={section.id} className="bg-gray-900 rounded-lg p-4">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-bold">{section.name}</h3>
                 <button
-                  onClick={() => setSelectedArticle(null)}
-                  className="mb-6 text-red-500 hover:text-red-400 flex items-center"
+                  onClick={() => deleteSection(section.id)}
+                  className="text-red-400 hover:text-red-300 text-sm"
                 >
-                  ← Back to Articles
+                  حذف
                 </button>
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h1 className="text-4xl font-bold mb-3">{selectedArticle.title}</h1>
-                    <div className="text-gray-400">
-                      <div>By {selectedArticle.author}</div>
-                      <div>Section: {getSectionName(selectedArticle.section_id)}</div>
-                      <div>Created: {new Date(selectedArticle.created_at).toLocaleDateString()}</div>
-                      {selectedArticle.updated_at !== selectedArticle.created_at && (
-                        <div>Updated: {new Date(selectedArticle.updated_at).toLocaleDateString()}</div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={() => deleteArticle(selectedArticle.id)}
-                      className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Delete Article
-                    </button>
-                  </div>
-                </div>
-                
-                {selectedArticle.image_data && (
-                  <img
-                    src={selectedArticle.image_data}
-                    alt={selectedArticle.title}
-                    className="w-full h-64 object-cover rounded-lg mb-8"
-                  />
-                )}
-                
-                <div className="prose prose-invert max-w-none">
-                  {selectedArticle.content.split('\n').map((paragraph, index) => (
-                    <p key={index} className="mb-6 text-gray-300 leading-relaxed text-lg">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
               </div>
-            ) : (
-              /* Articles Management Grid */
-              <>
-                <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-3xl font-bold">
-                    {selectedSection === "all" ? "All Articles" : `${getSectionName(selectedSection)} Articles`}
-                  </h2>
-                  <span className="text-gray-400 bg-gray-800 px-3 py-1 rounded-full text-sm">
-                    {filteredArticles.length} articles
-                  </span>
-                </div>
-
-                {filteredArticles.length === 0 ? (
-                  <div className="text-center py-16">
-                    <div className="text-8xl mb-6">📝</div>
-                    <h3 className="text-2xl font-bold mb-4">No articles yet</h3>
-                    <p className="text-gray-400 mb-6">Start by creating your first article!</p>
-                    <button
-                      onClick={() => setShowAddArticle(true)}
-                      className="bg-red-600 hover:bg-red-700 px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
-                    >
-                      Write Your First Article
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {filteredArticles.map((article) => (
-                      <div
-                        key={article.id}
-                        className="bg-gray-900 rounded-lg overflow-hidden shadow-lg"
-                      >
-                        {article.image_data && (
-                          <img
-                            src={article.image_data}
-                            alt={article.title}
-                            className="w-full h-40 object-cover"
-                          />
-                        )}
-                        <div className="p-6">
-                          <div className="text-red-500 text-sm mb-2 font-semibold">
-                            {getSectionName(article.section_id)}
-                          </div>
-                          <h3 className="text-xl font-bold mb-3 line-clamp-2">{article.title}</h3>
-                          <p className="text-gray-400 text-sm line-clamp-2 mb-4">
-                            {article.content.slice(0, 100)}...
-                          </p>
-                          <div className="flex justify-between items-center">
-                            <div className="text-sm text-gray-500">
-                              <span>By {article.author}</span>
-                              <span className="mx-2">•</span>
-                              <span>{new Date(article.created_at).toLocaleDateString()}</span>
-                            </div>
-                            <div className="flex items-center space-x-1 text-gray-400">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                              </svg>
-                              <span className="text-xs">{article.likes_count || 0}</span>
-                            </div>
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => setSelectedArticle(article)}
-                                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm transition-colors"
-                              >
-                                View
-                              </button>
-                              <button
-                                onClick={() => deleteArticle(article.id)}
-                                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm transition-colors"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+              {section.description && (
+                <p className="text-gray-400 text-sm mb-2">{section.description}</p>
+              )}
+              <div className="text-xs text-gray-500">
+                {articles.filter(a => a.section_id === section.id).length} مقال
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
+      {/* Modals */}
       {/* Add Section Modal */}
       {showAddSection && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-900 rounded-lg p-8 max-w-md w-full mx-4">
-            <h2 className="text-2xl font-bold mb-6 text-red-500">Create New Section</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal-backdrop">
+          <div className="bg-gray-900 rounded-xl p-8 max-w-md w-full mx-4">
+            <h2 className="text-2xl font-bold mb-6 arabic-title">إضافة قسم جديد</h2>
             <form onSubmit={createSection}>
-              <input
-                type="text"
-                placeholder="Section Name"
-                value={newSection.name}
-                onChange={(e) => setNewSection({...newSection, name: e.target.value})}
-                className="w-full p-4 mb-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                required
-              />
-              <textarea
-                placeholder="Description (optional)"
-                value={newSection.description}
-                onChange={(e) => setNewSection({...newSection, description: e.target.value})}
-                className="w-full p-4 mb-6 bg-gray-800 rounded-lg text-white h-24 resize-none border border-gray-700 focus:border-red-500"
-              />
-              <div className="flex space-x-4">
-                <button
-                  type="submit"
-                  className="flex-1 bg-red-600 hover:bg-red-700 py-3 rounded-lg font-semibold transition-colors"
-                >
-                  Create Section
-                </button>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">اسم القسم</label>
+                <input
+                  type="text"
+                  value={newSection.name}
+                  onChange={(e) => setNewSection({...newSection, name: e.target.value})}
+                  className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                  required
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">وصف القسم</label>
+                <textarea
+                  value={newSection.description}
+                  onChange={(e) => setNewSection({...newSection, description: e.target.value})}
+                  className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 arabic-content"
+                  rows={3}
+                />
+              </div>
+              <div className="flex justify-end space-x-4 space-x-reverse">
                 <button
                   type="button"
                   onClick={() => setShowAddSection(false)}
-                  className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-semibold transition-colors"
+                  className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors"
                 >
-                  Cancel
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
+                >
+                  إضافة القسم
                 </button>
               </div>
             </form>
@@ -1922,75 +1862,85 @@ const AdminPanel = () => {
 
       {/* Add Article Modal */}
       {showAddArticle && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 overflow-y-auto">
-          <div className="bg-gray-900 rounded-lg p-8 max-w-2xl w-full mx-4 my-8">
-            <h2 className="text-2xl font-bold mb-6 text-red-500">Create New Article</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal-backdrop overflow-y-auto">
+          <div className="bg-gray-900 rounded-xl p-8 max-w-2xl w-full mx-4 my-8">
+            <h2 className="text-2xl font-bold mb-6 arabic-title">كتابة مقال جديد</h2>
             <form onSubmit={createArticle}>
-              <input
-                type="text"
-                placeholder="Article Title"
-                value={newArticle.title}
-                onChange={(e) => setNewArticle({...newArticle, title: e.target.value})}
-                className="w-full p-4 mb-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Author Name"
-                value={newArticle.author}
-                onChange={(e) => setNewArticle({...newArticle, author: e.target.value})}
-                className="w-full p-4 mb-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                required
-              />
-              <select
-                value={newArticle.section_id}
-                onChange={(e) => setNewArticle({...newArticle, section_id: e.target.value})}
-                className="w-full p-4 mb-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
-                required
-              >
-                <option value="">Select Section</option>
-                {sections.map((section) => (
-                  <option key={section.id} value={section.id}>
-                    {section.name}
-                  </option>
-                ))}
-              </select>
-              <textarea
-                placeholder="Article Content (Use line breaks to separate paragraphs)"
-                value={newArticle.content}
-                onChange={(e) => setNewArticle({...newArticle, content: e.target.value})}
-                className="w-full p-4 mb-4 bg-gray-800 rounded-lg text-white h-48 resize-none border border-gray-700 focus:border-red-500"
-                required
-              />
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-3">Article Image (Optional)</label>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">عنوان المقال</label>
+                <input
+                  type="text"
+                  value={newArticle.title}
+                  onChange={(e) => setNewArticle({...newArticle, title: e.target.value})}
+                  className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 arabic-content"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">القسم</label>
+                <select
+                  value={newArticle.section_id}
+                  onChange={(e) => setNewArticle({...newArticle, section_id: e.target.value})}
+                  className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                  required
+                >
+                  <option value="">اختر القسم</option>
+                  {sections.map((section) => (
+                    <option key={section.id} value={section.id}>
+                      {section.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">الكاتب</label>
+                <input
+                  type="text"
+                  value={newArticle.author}
+                  onChange={(e) => setNewArticle({...newArticle, author: e.target.value})}
+                  className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">صورة المقال (اختياري)</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  className="w-full p-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700"
+                  className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
                 />
                 {newArticle.image_data && (
                   <img
                     src={newArticle.image_data}
-                    alt="Preview"
-                    className="mt-4 w-full h-40 object-cover rounded-lg"
+                    alt="معاينة"
+                    className="mt-2 w-32 h-32 object-cover rounded"
                   />
                 )}
               </div>
-              <div className="flex space-x-4">
-                <button
-                  type="submit"
-                  className="flex-1 bg-red-600 hover:bg-red-700 py-4 rounded-lg font-semibold transition-colors"
-                >
-                  Publish Article
-                </button>
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">محتوى المقال</label>
+                <textarea
+                  value={newArticle.content}
+                  onChange={(e) => setNewArticle({...newArticle, content: e.target.value})}
+                  className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 arabic-content"
+                  rows={12}
+                  required
+                />
+              </div>
+              <div className="flex justify-end space-x-4 space-x-reverse">
                 <button
                   type="button"
                   onClick={() => setShowAddArticle(false)}
-                  className="flex-1 bg-gray-700 hover:bg-gray-600 py-4 rounded-lg font-semibold transition-colors"
+                  className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors"
                 >
-                  Cancel
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors"
+                >
+                  نشر المقال
                 </button>
               </div>
             </form>
@@ -1998,54 +1948,96 @@ const AdminPanel = () => {
         </div>
       )}
 
-      {/* Logo Management Modal */}
+      {/* Logo Manager Modal */}
       {showLogoManager && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-900 rounded-lg p-8 max-w-md w-full mx-4">
-            <h2 className="text-2xl font-bold mb-6 text-red-500">Manage Site Logo</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal-backdrop">
+          <div className="bg-gray-900 rounded-xl p-8 max-w-md w-full mx-4">
+            <h2 className="text-2xl font-bold mb-6 arabic-title">إدارة شعار الموقع</h2>
             
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-3">Current Logo</h3>
-              {currentLogo?.logo_data ? (
-                <div className="text-center">
+            <div className="mb-6 text-center">
+              <div className="w-32 h-32 bg-black rounded-lg flex items-center justify-center mx-auto mb-4 border border-gray-600">
+                {currentLogo?.logo_data ? (
                   <img
                     src={currentLogo.logo_data}
-                    alt="Current Logo"
-                    className="max-w-full h-32 object-contain mx-auto mb-3 bg-black rounded-lg p-2 border border-gray-600"
+                    alt="الشعار الحالي"
+                    className="w-full h-full object-contain rounded-lg"
                   />
-                  <p className="text-sm text-gray-400">{currentLogo.logo_name}</p>
-                </div>
-              ) : (
-                <div className="text-center py-8 bg-gray-800 rounded-lg">
-                  <svg className="w-16 h-16 mx-auto mb-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                  <p className="text-gray-400">No logo uploaded</p>
-                </div>
-              )}
+                ) : (
+                  <div className="text-center">
+                    <div className="text-gray-300 text-sm">فرسان</div>
+                    <div className="text-gray-300 text-sm">العقيدة</div>
+                  </div>
+                )}
+              </div>
+              <p className="text-gray-400 text-sm">الشعار الحالي</p>
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-3">Upload New Logo</label>
+              <label className="block text-sm font-medium mb-2">تحديث الشعار</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleLogoUpload}
                 disabled={logoUploading}
-                className="w-full p-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700 disabled:opacity-50"
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
               />
               {logoUploading && (
-                <div className="mt-2 text-sm text-blue-400">Uploading logo...</div>
+                <p className="text-blue-400 text-sm mt-2">جارٍ رفع الشعار...</p>
               )}
             </div>
 
-            <div className="flex space-x-4">
+            <div className="flex justify-end">
               <button
                 onClick={() => setShowLogoManager(false)}
-                className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-semibold transition-colors"
-                disabled={logoUploading}
+                className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors"
               >
-                Close
+                إغلاق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Article View Modal */}
+      {selectedArticle && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal-backdrop overflow-y-auto">
+          <div className="bg-gray-900 rounded-xl p-8 max-w-4xl w-full mx-4 my-8">
+            <div className="flex justify-between items-start mb-6">
+              <h2 className="text-2xl font-bold arabic-title">{selectedArticle.title}</h2>
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="mb-4 text-sm text-gray-400">
+              القسم: {getSectionName(selectedArticle.section_id)} • 
+              الكاتب: {selectedArticle.author} • 
+              {new Date(selectedArticle.created_at).toLocaleDateString('ar-SA')}
+            </div>
+
+            {selectedArticle.image_data && (
+              <img
+                src={selectedArticle.image_data}
+                alt={selectedArticle.title}
+                className="w-full max-h-64 object-cover rounded-lg mb-6"
+              />
+            )}
+
+            <div className="prose prose-invert max-w-none arabic-content">
+              <div className="whitespace-pre-wrap leading-relaxed">
+                {selectedArticle.content}
+              </div>
+            </div>
+
+            <div className="flex justify-end mt-8">
+              <button
+                onClick={() => setSelectedArticle(null)}
+                className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors"
+              >
+                إغلاق
               </button>
             </div>
           </div>
@@ -2055,23 +2047,28 @@ const AdminPanel = () => {
   );
 };
 
-// Main App Component with Routing
-const App = () => {
+// Main App Component
+function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/article/:id" element={<ArticlePage />} />
-          <Route path="/section/:id" element={<SectionPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/admin" element={<AdminPanel />} />
-        </Routes>
+        <div className="App">
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/article/:id" element={<ArticlePage />} />
+            <Route path="/section/:id" element={<SectionPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminPanel />} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </AuthProvider>
   );
-};
+}
 
 export default App;
