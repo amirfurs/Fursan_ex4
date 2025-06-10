@@ -150,7 +150,7 @@ backend:
         agent: "testing"
         comment: "Successfully tested base64 image storage functionality. Images are correctly stored as base64 strings in the database and retrieved with articles. The system properly handles image_data and image_name fields."
         
-  - task: "Comment System APIs"
+  - task: "User Authentication System"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -160,12 +160,27 @@ backend:
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Implemented comment system with POST /api/articles/{article_id}/comments, GET /api/articles/{article_id}/comments, PUT /api/comments/{comment_id}, DELETE /api/comments/{comment_id} endpoints"
+        comment: "Implemented JWT-based authentication with user registration, login, profile management, and profile picture support"
       - working: true
         agent: "testing"
-        comment: "Successfully tested all comment system endpoints. POST /api/articles/{article_id}/comments creates comments correctly with authentication. GET /api/articles/{article_id}/comments retrieves comments without authentication. PUT /api/comments/{comment_id} allows users to edit their own comments. DELETE /api/comments/{comment_id} allows users to delete their own comments. Authentication is properly enforced for protected endpoints."
-        
-  - task: "Logo Management APIs"
+        comment: "User authentication system is working correctly with JWT tokens, password hashing, and profile management."
+
+  - task: "Comment System API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented complete comment system with CRUD operations: POST /api/articles/{id}/comments, GET /api/articles/{id}/comments, PUT /api/comments/{id}, DELETE /api/comments/{id}. Comments include user info and proper authentication checks."
+      - working: true
+        agent: "testing"
+        comment: "Successfully tested all comment system endpoints. Comments can be created by authenticated users, retrieved publicly, and edited/deleted by their owners. Proper authentication enforcement is in place."
+
+  - task: "Logo Management API"
     implemented: true
     working: true
     file: "/app/backend/server.py"
