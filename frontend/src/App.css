@@ -4,6 +4,42 @@
 
 .App {
   text-align: center;
+  direction: rtl;
+  font-family: 'Cairo', sans-serif;
+}
+
+/* Arabic Typography */
+.arabic-title {
+  font-family: 'Amiri', serif;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.arabic-content {
+  font-family: 'Cairo', sans-serif;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+/* Navigation adjustments for RTL */
+.nav-rtl {
+  flex-direction: row-reverse;
+}
+
+.nav-rtl .dropdown {
+  left: auto;
+  right: 0;
+}
+
+/* Button spacing for Arabic */
+.btn-group-rtl {
+  gap: 0.5rem;
+  flex-direction: row-reverse;
+}
+
+/* Arabic number formatting */
+.arabic-numbers {
+  font-variant-numeric: proportional-nums;
 }
 
 /* Custom scrollbar for dark theme */
