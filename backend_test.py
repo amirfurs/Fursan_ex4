@@ -39,9 +39,38 @@ class TestBackendAPI(unittest.TestCase):
         # This is a small 1x1 pixel transparent PNG
         self.sample_image_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
         
+        # Create test user for authentication tests
+        self.test_user_data = {
+            "username": f"testuser_{uuid.uuid4().hex[:8]}",
+            "email": f"testuser_{uuid.uuid4().hex[:8]}@example.com",
+            "full_name": "Test User",
+            "password": "TestPassword123!",
+            "profile_picture": self.sample_image_base64
+        }
+        
+        # Register the test user
+        response = requests.post(f"{API_URL}/register", json=self.test_user_data)
+        self.assertEqual(response.status_code, 200, f"Failed to register test user: {response.text}")
+        self.test_user = response.json()
+        self.auth_token = self.test_user["access_token"]
+        self.auth_headers = {"Authorization": f"Bearer {self.auth_token}"}
+        
+        # Create a test article for comment tests
+        article_data = {
+            "title": f"Test Article for Comments {uuid.uuid4()}",
+            "content": "This is a test article for comment API testing",
+            "author": "Test Author",
+            "section_id": self.test_section["id"]
+        }
+        
+        response = requests.post(f"{API_URL}/articles", json=article_data)
+        self.assertEqual(response.status_code, 200, f"Failed to create test article: {response.text}")
+        self.test_article = response.json()
+        
         # Track created resources for cleanup
         self.created_sections = [self.test_section["id"]]
-        self.created_articles = []
+        self.created_articles = [self.test_article["id"]]
+        self.created_comments = []
 
     def tearDown(self):
         # Clean up created articles
