@@ -250,11 +250,19 @@ const PublicLayout = ({ children }) => {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                  {/* Temporary placeholder for logo */}
-                  <div className="text-center">
-                    <div className="text-gray-600 text-xs">فرسان</div>
-                    <div className="text-gray-600 text-xs">العقيدة</div>
-                  </div>
+                  {siteLogo?.logo_data ? (
+                    <img
+                      src={siteLogo.logo_data}
+                      alt="Site Logo"
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    /* Temporary placeholder for logo */
+                    <div className="text-center">
+                      <div className="text-gray-600 text-xs">فرسان</div>
+                      <div className="text-gray-600 text-xs">العقيدة</div>
+                    </div>
+                  )}
                 </div>
                 <h3 className="text-xl font-bold">
                   <span className="text-red-500">Foursan</span>
