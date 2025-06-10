@@ -31,10 +31,5 @@
       "dest": "/frontend/build/index.html"
     }
   ],
-  "env": {
-    "MONGO_URL": "@mongo_url",
-    "DB_NAME": "@db_name",
-    "SECRET_KEY": "@secret_key"
-  },
   "regions": ["iad1"]
 }
