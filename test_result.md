@@ -214,5 +214,7 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Implemented Phase 1 of the article publishing system with core CRUD functionality, image upload support, and black/red themed UI. All backend APIs use base64 image storage. Ready for comprehensive backend testing of section and article management endpoints."
+  - agent: "main"
+    message: "MAJOR UPDATE: Restructured application into two distinct interfaces: 1) Public interface (/) for visitors to read articles with clean navigation and responsive design, 2) Admin panel (/admin) for content management with full CRUD operations. Both interfaces use the same backend APIs. Ready for comprehensive frontend testing."
   - agent: "testing"
     message: "Completed comprehensive testing of all backend APIs. Created backend_test.py with unittest framework to test all endpoints. All tests passed successfully. Section Management API, Article Management API, and Image Upload System are all working correctly. The system properly handles CRUD operations for sections and articles, including cascade deletion of articles when a section is deleted. Base64 image storage is working correctly."
