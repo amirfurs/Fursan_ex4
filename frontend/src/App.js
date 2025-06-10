@@ -249,7 +249,7 @@ const PublicLayout = ({ children }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center overflow-hidden border border-gray-600">
                   {siteLogo?.logo_data ? (
                     <img
                       src={siteLogo.logo_data}
@@ -259,8 +259,8 @@ const PublicLayout = ({ children }) => {
                   ) : (
                     /* Temporary placeholder for logo */
                     <div className="text-center">
-                      <div className="text-gray-600 text-xs">فرسان</div>
-                      <div className="text-gray-600 text-xs">العقيدة</div>
+                      <div className="text-gray-300 text-xs">فرسان</div>
+                      <div className="text-gray-300 text-xs">العقيدة</div>
                     </div>
                   )}
                 </div>
