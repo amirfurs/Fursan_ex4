@@ -98,10 +98,16 @@ const PublicLayout = ({ children }) => {
       <header className="bg-gradient-to-r from-black via-red-900 to-black border-b border-red-800 shadow-lg">
         <div className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
-            <Link to="/" className="text-4xl font-bold tracking-tight">
-              <span className="text-red-500">Red</span>
-              <span className="text-white">Black</span>
-              <span className="text-red-500">News</span>
+            <Link to="/" className="flex items-center space-x-3">
+              {/* Logo placeholder - will be replaced with actual logo */}
+              <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">F</span>
+              </div>
+              <div className="text-4xl font-bold tracking-tight">
+                <span className="text-red-500">Red</span>
+                <span className="text-white">Black</span>
+                <span className="text-red-500">News</span>
+              </div>
             </Link>
             <div className="flex items-center space-x-6">
               <nav className="hidden md:flex space-x-8">
