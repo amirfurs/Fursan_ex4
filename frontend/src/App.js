@@ -41,28 +41,25 @@ const PublicLayout = ({ children }) => {
               <Link to="/" className="text-lg hover:text-red-400 transition-colors font-medium">
                 Home
               </Link>
-              {sections.slice(0, 5).map((section) => (
-                <Link 
-                  key={section.id} 
-                  to={`/section/${section.id}`}
-                  className="text-lg hover:text-red-400 transition-colors font-medium"
-                >
-                  {section.name}
-                </Link>
-              ))}
-              {sections.length > 5 && (
+              {sections.length > 0 && (
                 <div className="relative group">
-                  <span className="text-lg hover:text-red-400 transition-colors font-medium cursor-pointer">
-                    More ▼
+                  <span className="text-lg hover:text-red-400 transition-colors font-medium cursor-pointer flex items-center">
+                    Sections 
+                    <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </span>
-                  <div className="absolute top-full left-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-48 z-10">
-                    {sections.slice(5).map((section) => (
+                  <div className="absolute top-full left-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-56 z-10 mt-1">
+                    {sections.map((section) => (
                       <Link 
                         key={section.id} 
                         to={`/section/${section.id}`}
-                        className="block px-4 py-2 hover:bg-gray-800 hover:text-red-400 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                        className="block px-4 py-3 hover:bg-gray-800 hover:text-red-400 transition-colors first:rounded-t-lg last:rounded-b-lg border-b border-gray-700 last:border-b-0"
                       >
-                        {section.name}
+                        <div className="font-medium">{section.name}</div>
+                        {section.description && (
+                          <div className="text-xs text-gray-500 mt-1">{section.description.slice(0, 50)}...</div>
+                        )}
                       </Link>
                     ))}
                   </div>
