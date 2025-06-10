@@ -244,6 +244,42 @@ frontend:
         agent: "main"
         comment: "Created image upload component with preview functionality for article creation in admin panel"
 
+  - task: "User Authentication UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented complete authentication UI with login, register, and profile pages. Includes profile picture upload and user context management."
+
+  - task: "Comment System UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added comprehensive comment system to article pages with comment forms, display, editing, and deletion. Includes authentication checks and user-friendly UI."
+
+  - task: "Logo Management UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added logo management interface to admin panel with upload functionality and dynamic logo display throughout the site. Admin can update site logo which appears in header and footer."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
