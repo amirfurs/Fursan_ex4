@@ -1932,6 +1932,60 @@ const AdminPanel = () => {
           </div>
         </div>
       )}
+
+      {/* Logo Management Modal */}
+      {showLogoManager && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded-lg p-8 max-w-md w-full mx-4">
+            <h2 className="text-2xl font-bold mb-6 text-red-500">Manage Site Logo</h2>
+            
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3">Current Logo</h3>
+              {currentLogo?.logo_data ? (
+                <div className="text-center">
+                  <img
+                    src={currentLogo.logo_data}
+                    alt="Current Logo"
+                    className="max-w-full h-32 object-contain mx-auto mb-3 bg-white rounded-lg p-2"
+                  />
+                  <p className="text-sm text-gray-400">{currentLogo.logo_name}</p>
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-gray-800 rounded-lg">
+                  <svg className="w-16 h-16 mx-auto mb-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  <p className="text-gray-400">No logo uploaded</p>
+                </div>
+              )}
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-3">Upload New Logo</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                disabled={logoUploading}
+                className="w-full p-4 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700 disabled:opacity-50"
+              />
+              {logoUploading && (
+                <div className="mt-2 text-sm text-blue-400">Uploading logo...</div>
+              )}
+            </div>
+
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowLogoManager(false)}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-semibold transition-colors"
+                disabled={logoUploading}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
