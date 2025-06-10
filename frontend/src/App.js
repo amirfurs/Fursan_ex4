@@ -222,11 +222,16 @@ const PublicLayout = ({ children }) => {
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-2xl font-bold mb-4">
-                <span className="text-red-500">Red</span>
-                <span className="text-white">Black</span>
-                <span className="text-red-500">News</span>
-              </h3>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">F</span>
+                </div>
+                <h3 className="text-2xl font-bold">
+                  <span className="text-red-500">Red</span>
+                  <span className="text-white">Black</span>
+                  <span className="text-red-500">News</span>
+                </h3>
+              </div>
               <p className="text-gray-400">Quality journalism and editorial content delivered with passion and precision.</p>
             </div>
             <div>
