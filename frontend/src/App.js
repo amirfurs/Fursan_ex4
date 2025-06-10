@@ -9,6 +9,71 @@ const API = `${BACKEND_URL}/api`;
 // Admin passcode (in real app, this would be in environment variables)
 const ADMIN_PASSCODE = "admin2025";
 
+// Auth Context
+const AuthContext = createContext();
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (token) {
+      // Set axios default header
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      // Verify token and get user info
+      fetchUserProfile();
+    } else {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await axios.get(`${API}/profile`);
+      setUser(response.data);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = (token, userData) => {
+    localStorage.setItem('token', token);
+    setToken(token);
+    setUser(userData);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+    delete axios.defaults.headers.common['Authorization'];
+  };
+
+  const value = {
+    user,
+    token,
+    login,
+    logout,
+    loading,
+    isAuthenticated: !!user
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
 // Public Interface Components
 const PublicLayout = ({ children }) => {
   const [sections, setSections] = useState([]);
