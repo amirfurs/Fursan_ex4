@@ -1,0 +1,20 @@
+{
+  "name": "foursan-al-aqida",
+  "version": "1.0.0",
+  "description": "منصة فرسان العقيدة للمقالات الإسلامية",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd frontend && yarn start",
+    "build": "cd frontend && yarn build",
+    "start": "cd frontend && yarn start",
+    "vercel-build": "cd frontend && yarn install && yarn build"
+  },
+  "keywords": ["islamic", "articles", "arabic", "religion"],
+  "author": "Foursan Al Aqida",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

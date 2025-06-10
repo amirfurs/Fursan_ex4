@@ -1,0 +1,17 @@
+backend/
+tests/
+scripts/
+*.md
+Dockerfile
+nginx.conf
+entrypoint.sh
+*.log
+__pycache__/
+*.pyc
+.env.local
+.env.development
+node_modules/
+.next/
+.DS_Store
+*.tgz
+*.tar.gz
