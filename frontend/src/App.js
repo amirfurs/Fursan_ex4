@@ -991,11 +991,12 @@ const RegisterPage = () => {
     setError('');
 
     try {
+      // Trim whitespace from inputs to prevent login issues later
       const registerData = {
-        username: formData.username,
-        email: formData.email,
-        full_name: formData.full_name,
-        password: formData.password,
+        username: formData.username.trim(),
+        email: formData.email.trim().toLowerCase(), // Also normalize email to lowercase
+        full_name: formData.full_name.trim(),
+        password: formData.password, // Don't trim password as it might be intentional
         profile_picture: formData.profile_picture
       };
 
@@ -1004,7 +1005,18 @@ const RegisterPage = () => {
       navigate('/');
     } catch (error) {
       console.error('Registration error:', error);
-      setError(error.response?.data?.detail || 'Registration failed');
+      if (error.response?.status === 400) {
+        const detail = error.response?.data?.detail;
+        if (detail?.includes('Username already')) {
+          setError('This username is already taken. Please choose a different one.');
+        } else if (detail?.includes('Email already')) {
+          setError('This email is already registered. Please use a different email or try logging in.');
+        } else {
+          setError(detail || 'Registration failed');
+        }
+      } else {
+        setError('Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
