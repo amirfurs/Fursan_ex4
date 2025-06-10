@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
 // Public Interface Components
 const PublicLayout = ({ children }) => {
   const [sections, setSections] = useState([]);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     fetchSections();
@@ -102,35 +103,73 @@ const PublicLayout = ({ children }) => {
               <span className="text-white">Black</span>
               <span className="text-red-500">News</span>
             </Link>
-            <nav className="hidden md:flex space-x-8">
-              <Link to="/" className="text-lg hover:text-red-400 transition-colors font-medium">
-                Home
-              </Link>
-              {sections.length > 0 && (
-                <div className="relative group">
-                  <span className="text-lg hover:text-red-400 transition-colors font-medium cursor-pointer flex items-center">
-                    Sections 
-                    <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </span>
-                  <div className="absolute top-full left-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-56 z-10 mt-1">
-                    {sections.map((section) => (
-                      <Link 
-                        key={section.id} 
-                        to={`/section/${section.id}`}
-                        className="block px-4 py-3 hover:bg-gray-800 hover:text-red-400 transition-colors first:rounded-t-lg last:rounded-b-lg border-b border-gray-700 last:border-b-0"
-                      >
-                        <div className="font-medium">{section.name}</div>
-                        {section.description && (
-                          <div className="text-xs text-gray-500 mt-1">{section.description.slice(0, 50)}...</div>
-                        )}
-                      </Link>
-                    ))}
+            <div className="flex items-center space-x-6">
+              <nav className="hidden md:flex space-x-8">
+                <Link to="/" className="text-lg hover:text-red-400 transition-colors font-medium">
+                  Home
+                </Link>
+                {sections.length > 0 && (
+                  <div className="relative group">
+                    <span className="text-lg hover:text-red-400 transition-colors font-medium cursor-pointer flex items-center">
+                      Sections 
+                      <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </span>
+                    <div className="absolute top-full left-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-56 z-10 mt-1">
+                      {sections.map((section) => (
+                        <Link 
+                          key={section.id} 
+                          to={`/section/${section.id}`}
+                          className="block px-4 py-3 hover:bg-gray-800 hover:text-red-400 transition-colors first:rounded-t-lg last:rounded-b-lg border-b border-gray-700 last:border-b-0"
+                        >
+                          <div className="font-medium">{section.name}</div>
+                          {section.description && (
+                            <div className="text-xs text-gray-500 mt-1">{section.description.slice(0, 50)}...</div>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </nav>
+                )}
+              </nav>
+              
+              {/* User Authentication */}
+              <div className="flex items-center space-x-4">
+                {user ? (
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      {user.profile_picture && (
+                        <img 
+                          src={user.profile_picture} 
+                          alt={user.full_name}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      )}
+                      <span className="text-sm font-medium">Hi, {user.full_name}!</span>
+                    </div>
+                    <Link to="/profile" className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition-colors">
+                      Profile
+                    </Link>
+                    <button 
+                      onClick={logout}
+                      className="text-sm bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-3">
+                    <Link to="/login" className="text-sm hover:text-red-400 transition-colors">
+                      Login
+                    </Link>
+                    <Link to="/register" className="text-sm bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                      Register
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </header>
