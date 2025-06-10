@@ -80,10 +80,12 @@ export const AuthProvider = ({ children }) => {
 // Public Interface Components
 const PublicLayout = ({ children }) => {
   const [sections, setSections] = useState([]);
+  const [siteLogo, setSiteLogo] = useState(null);
   const { user, logout } = useAuth();
 
   useEffect(() => {
     fetchSections();
+    fetchSiteLogo();
   }, []);
 
   const fetchSections = async () => {
@@ -92,6 +94,15 @@ const PublicLayout = ({ children }) => {
       setSections(response.data);
     } catch (error) {
       console.error("Error fetching sections:", error);
+    }
+  };
+
+  const fetchSiteLogo = async () => {
+    try {
+      const response = await axios.get(`${API}/settings/logo`);
+      setSiteLogo(response.data);
+    } catch (error) {
+      console.error("Error fetching logo:", error);
     }
   };
 
