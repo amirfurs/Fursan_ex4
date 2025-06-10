@@ -1630,6 +1630,12 @@ const AdminPanel = () => {
             >
               <span className="mr-2">✏️</span> Write Article
             </button>
+            <button
+              onClick={() => setShowLogoManager(true)}
+              className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
+            >
+              <span className="mr-2">🎨</span> Manage Logo
+            </button>
           </div>
         </div>
       </div>
