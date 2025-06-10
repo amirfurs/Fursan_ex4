@@ -1396,6 +1396,9 @@ const AdminPanel = () => {
   const [showAddSection, setShowAddSection] = useState(false);
   const [showAddArticle, setShowAddArticle] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [showLogoManager, setShowLogoManager] = useState(false);
+  const [currentLogo, setCurrentLogo] = useState(null);
+  const [logoUploading, setLogoUploading] = useState(false);
 
   // Form states
   const [newSection, setNewSection] = useState({ name: "", description: "" });
@@ -1412,8 +1415,18 @@ const AdminPanel = () => {
     if (isAuthenticated) {
       fetchSections();
       fetchArticles();
+      fetchCurrentLogo();
     }
   }, [isAuthenticated]);
+
+  const fetchCurrentLogo = async () => {
+    try {
+      const response = await axios.get(`${API}/settings/logo`);
+      setCurrentLogo(response.data);
+    } catch (error) {
+      console.error("Error fetching logo:", error);
+    }
+  };
 
   const fetchSections = async () => {
     try {
