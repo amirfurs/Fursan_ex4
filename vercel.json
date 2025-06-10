@@ -10,14 +10,14 @@
       }
     },
     {
-      "src": "api/**/*.py",
+      "src": "api/index.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "dest": "/api/index.py"
     },
     {
       "src": "/static/(.*)",
@@ -30,9 +30,13 @@
   ],
   "env": {
     "MONGO_URL": "@mongo_url",
-    "DB_NAME": "@db_name"
+    "DB_NAME": "@db_name",
+    "SECRET_KEY": "@secret_key"
   },
-  "buildCommand": "cd frontend && yarn install && yarn build",
-  "outputDirectory": "frontend/build",
-  "installCommand": "yarn install --cwd frontend && pip install -r api/requirements.txt"
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 10
+    }
+  },
+  "regions": ["iad1"]
 }
