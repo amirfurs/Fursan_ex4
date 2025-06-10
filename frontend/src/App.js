@@ -77,15 +77,30 @@ const PublicLayout = ({ children }) => {
             <Link to="/" className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
               Home
             </Link>
-            {sections.map((section) => (
-              <Link 
-                key={section.id} 
-                to={`/section/${section.id}`}
-                className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                {section.name}
-              </Link>
-            ))}
+            {sections.length > 0 && (
+              <details className="relative">
+                <summary className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer list-none flex items-center">
+                  Sections
+                  <svg className="ml-1 w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <div className="absolute top-full left-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl min-w-56 z-10 mt-1">
+                  {sections.map((section) => (
+                    <Link 
+                      key={section.id} 
+                      to={`/section/${section.id}`}
+                      className="block px-4 py-3 hover:bg-gray-800 hover:text-red-400 transition-colors first:rounded-t-lg last:rounded-b-lg border-b border-gray-700 last:border-b-0"
+                    >
+                      <div className="font-medium">{section.name}</div>
+                      {section.description && (
+                        <div className="text-xs text-gray-500 mt-1">{section.description.slice(0, 40)}...</div>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </details>
+            )}
           </div>
         </div>
       </div>
