@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Form
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,10 +6,10 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 import uuid
 from datetime import datetime
-
+import base64
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -25,32 +25,110 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
-
-# Define Models
-class StatusCheck(BaseModel):
+# Models
+class Section(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    name: str
+    description: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+class SectionCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
 
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
+class Article(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    content: str
+    author: str
+    section_id: str
+    image_data: Optional[str] = None  # Base64 encoded image
+    image_name: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
+class ArticleCreate(BaseModel):
+    title: str
+    content: str
+    author: str
+    section_id: str
+    image_data: Optional[str] = None
+    image_name: Optional[str] = None
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
+class ArticleUpdate(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    author: Optional[str] = None
+    section_id: Optional[str] = None
+    image_data: Optional[str] = None
+    image_name: Optional[str] = None
+
+# Section endpoints
+@api_router.post("/sections", response_model=Section)
+async def create_section(section: SectionCreate):
+    section_dict = section.dict()
+    section_obj = Section(**section_dict)
+    await db.sections.insert_one(section_obj.dict())
+    return section_obj
+
+@api_router.get("/sections", response_model=List[Section])
+async def get_sections():
+    sections = await db.sections.find().to_list(1000)
+    return [Section(**section) for section in sections]
+
+@api_router.delete("/sections/{section_id}")
+async def delete_section(section_id: str):
+    result = await db.sections.delete_one({"id": section_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Section not found")
+    # Also delete articles in this section
+    await db.articles.delete_many({"section_id": section_id})
+    return {"message": "Section deleted successfully"}
+
+# Article endpoints
+@api_router.post("/articles", response_model=Article)
+async def create_article(article: ArticleCreate):
+    article_dict = article.dict()
+    article_obj = Article(**article_dict)
+    await db.articles.insert_one(article_obj.dict())
+    return article_obj
+
+@api_router.get("/articles", response_model=List[Article])
+async def get_articles():
+    articles = await db.articles.find().to_list(1000)
+    return [Article(**article) for article in articles]
+
+@api_router.get("/articles/{article_id}", response_model=Article)
+async def get_article(article_id: str):
+    article = await db.articles.find_one({"id": article_id})
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return Article(**article)
+
+@api_router.put("/articles/{article_id}", response_model=Article)
+async def update_article(article_id: str, article_update: ArticleUpdate):
+    existing_article = await db.articles.find_one({"id": article_id})
+    if not existing_article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    update_data = {k: v for k, v in article_update.dict().items() if v is not None}
+    update_data["updated_at"] = datetime.utcnow()
+    
+    await db.articles.update_one({"id": article_id}, {"$set": update_data})
+    updated_article = await db.articles.find_one({"id": article_id})
+    return Article(**updated_article)
+
+@api_router.delete("/articles/{article_id}")
+async def delete_article(article_id: str):
+    result = await db.articles.delete_one({"id": article_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return {"message": "Article deleted successfully"}
+
+@api_router.get("/articles/section/{section_id}", response_model=List[Article])
+async def get_articles_by_section(section_id: str):
+    articles = await db.articles.find({"section_id": section_id}).to_list(1000)
+    return [Article(**article) for article in articles]
 
 # Include the router in the main app
 app.include_router(api_router)
