@@ -159,6 +159,41 @@ class Like(BaseModel):
     article_id: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+class Comment(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    article_id: str
+    content: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CommentCreate(BaseModel):
+    content: str
+
+class CommentUpdate(BaseModel):
+    content: str
+
+class CommentResponse(BaseModel):
+    id: str
+    user_id: str
+    article_id: str
+    content: str
+    created_at: datetime
+    updated_at: datetime
+    user_full_name: str
+    user_profile_picture: Optional[str] = None
+
+class SiteSettings(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    logo_data: Optional[str] = None
+    logo_name: Optional[str] = None
+    site_name: str = "Foursan al aQida"
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class LogoUpdate(BaseModel):
+    logo_data: Optional[str] = None
+    logo_name: Optional[str] = None
+
 # User Authentication Endpoints
 @api_router.post("/register", response_model=Token)
 async def register_user(user: UserCreate):
