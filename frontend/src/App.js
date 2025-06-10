@@ -1176,8 +1176,10 @@ const LoginPage = () => {
                 value={formData.username}
                 onChange={(e) => setFormData({...formData, username: e.target.value})}
                 className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                placeholder="Enter your username"
                 required
               />
+              <p className="text-xs text-gray-400 mt-1">Username is case-sensitive</p>
             </div>
 
             <div>
@@ -1187,12 +1189,19 @@ const LoginPage = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                placeholder="Enter your password"
                 required
               />
+              <p className="text-xs text-gray-400 mt-1">Password is case-sensitive</p>
             </div>
 
             {error && (
-              <div className="text-red-400 text-sm text-center">{error}</div>
+              <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-3">
+                <div className="text-red-400 text-sm text-center">{error}</div>
+                <div className="text-xs text-gray-400 text-center mt-2">
+                  Make sure your username and password match exactly what you used during registration.
+                </div>
+              </div>
             )}
 
             <button
