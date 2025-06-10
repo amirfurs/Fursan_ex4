@@ -3,6 +3,9 @@ import "./App.css";
 import axios from "axios";
 import { BrowserRouter, Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 
+// Logo base64 data - Replace this with your actual logo
+const LOGO_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="; // Replace this placeholder with your actual logo base64
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
