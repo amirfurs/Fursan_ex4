@@ -447,6 +447,142 @@ async def get_articles_by_section(section_id: str, current_user: Optional[User] 
         result.append(article_response)
     return result
 
+# Comment endpoints
+@api_router.post("/articles/{article_id}/comments", response_model=CommentResponse)
+async def create_comment(article_id: str, comment: CommentCreate, current_user: User = Depends(get_current_user)):
+    # Check if article exists
+    article = await db.articles.find_one({"id": article_id})
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    comment_dict = comment.dict()
+    comment_dict["user_id"] = current_user.id
+    comment_dict["article_id"] = article_id
+    comment_obj = Comment(**comment_dict)
+    
+    await db.comments.insert_one(comment_obj.dict())
+    
+    # Return comment with user info
+    return CommentResponse(
+        **comment_obj.dict(),
+        user_full_name=current_user.full_name,
+        user_profile_picture=current_user.profile_picture
+    )
+
+@api_router.get("/articles/{article_id}/comments", response_model=List[CommentResponse])
+async def get_article_comments(article_id: str):
+    # Check if article exists
+    article = await db.articles.find_one({"id": article_id})
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    # Get comments for this article
+    comments = await db.comments.find({"article_id": article_id}).sort("created_at", 1).to_list(1000)
+    
+    # Enrich comments with user info
+    result = []
+    for comment in comments:
+        user = await db.users.find_one({"id": comment["user_id"]})
+        if user:
+            comment_response = CommentResponse(
+                **comment,
+                user_full_name=user["full_name"],
+                user_profile_picture=user.get("profile_picture")
+            )
+            result.append(comment_response)
+    
+    return result
+
+@api_router.put("/comments/{comment_id}", response_model=CommentResponse)
+async def update_comment(comment_id: str, comment_update: CommentUpdate, current_user: User = Depends(get_current_user)):
+    comment = await db.comments.find_one({"id": comment_id})
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
+    # Check if user owns this comment
+    if comment["user_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only edit your own comments")
+    
+    # Update comment
+    update_data = comment_update.dict()
+    update_data["updated_at"] = datetime.utcnow()
+    
+    await db.comments.update_one({"id": comment_id}, {"$set": update_data})
+    updated_comment = await db.comments.find_one({"id": comment_id})
+    
+    return CommentResponse(
+        **updated_comment,
+        user_full_name=current_user.full_name,
+        user_profile_picture=current_user.profile_picture
+    )
+
+@api_router.delete("/comments/{comment_id}")
+async def delete_comment(comment_id: str, current_user: User = Depends(get_current_user)):
+    comment = await db.comments.find_one({"id": comment_id})
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
+    # Check if user owns this comment
+    if comment["user_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only delete your own comments")
+    
+    result = await db.comments.delete_one({"id": comment_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
+    return {"message": "Comment deleted successfully"}
+
+# Site Settings / Logo Management endpoints
+@api_router.get("/settings/logo")
+async def get_site_logo():
+    settings = await db.site_settings.find_one()
+    if not settings:
+        # Return default/empty logo info
+        return {
+            "logo_data": None,
+            "logo_name": None,
+            "site_name": "Foursan al aQida"
+        }
+    return {
+        "logo_data": settings.get("logo_data"),
+        "logo_name": settings.get("logo_name"),
+        "site_name": settings.get("site_name", "Foursan al aQida")
+    }
+
+@api_router.put("/settings/logo")
+async def update_site_logo(logo_update: LogoUpdate):
+    # In a real app, you'd want admin authentication here
+    # For now, we'll use a simple approach
+    
+    existing_settings = await db.site_settings.find_one()
+    
+    if existing_settings:
+        # Update existing settings
+        update_data = {}
+        if logo_update.logo_data is not None:
+            update_data["logo_data"] = logo_update.logo_data
+        if logo_update.logo_name is not None:
+            update_data["logo_name"] = logo_update.logo_name
+        update_data["updated_at"] = datetime.utcnow()
+        
+        await db.site_settings.update_one({"id": existing_settings["id"]}, {"$set": update_data})
+        updated_settings = await db.site_settings.find_one({"id": existing_settings["id"]})
+        return {
+            "logo_data": updated_settings.get("logo_data"),
+            "logo_name": updated_settings.get("logo_name"),
+            "site_name": updated_settings.get("site_name", "Foursan al aQida")
+        }
+    else:
+        # Create new settings
+        settings_dict = logo_update.dict()
+        settings_obj = SiteSettings(**settings_dict)
+        await db.site_settings.insert_one(settings_obj.dict())
+        return {
+            "logo_data": settings_obj.logo_data,
+            "logo_name": settings_obj.logo_name,
+            "site_name": settings_obj.site_name
+        }
+
 # Include the router in the main app
 app.include_router(api_router)
 
