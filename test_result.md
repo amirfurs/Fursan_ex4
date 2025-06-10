@@ -149,6 +149,36 @@ backend:
       - working: true
         agent: "testing"
         comment: "Successfully tested base64 image storage functionality. Images are correctly stored as base64 strings in the database and retrieved with articles. The system properly handles image_data and image_name fields."
+        
+  - task: "Comment System APIs"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented comment system with POST /api/articles/{article_id}/comments, GET /api/articles/{article_id}/comments, PUT /api/comments/{comment_id}, DELETE /api/comments/{comment_id} endpoints"
+      - working: true
+        agent: "testing"
+        comment: "Successfully tested all comment system endpoints. POST /api/articles/{article_id}/comments creates comments correctly with authentication. GET /api/articles/{article_id}/comments retrieves comments without authentication. PUT /api/comments/{comment_id} allows users to edit their own comments. DELETE /api/comments/{comment_id} allows users to delete their own comments. Authentication is properly enforced for protected endpoints."
+        
+  - task: "Logo Management APIs"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented logo management with GET /api/settings/logo and PUT /api/settings/logo endpoints"
+      - working: true
+        agent: "testing"
+        comment: "Successfully tested logo management endpoints. GET /api/settings/logo retrieves current logo settings without authentication. PUT /api/settings/logo updates logo settings correctly. Logo data is properly stored and retrieved as base64."
 
 frontend:
   - task: "Public Interface (Visitor View)"
