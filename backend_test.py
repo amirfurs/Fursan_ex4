@@ -73,6 +73,13 @@ class TestBackendAPI(unittest.TestCase):
         self.created_comments = []
 
     def tearDown(self):
+        # Clean up created comments
+        for comment_id in self.created_comments:
+            try:
+                requests.delete(f"{API_URL}/comments/{comment_id}", headers=self.auth_headers)
+            except Exception as e:
+                print(f"Error cleaning up comment {comment_id}: {e}")
+                
         # Clean up created articles
         for article_id in self.created_articles:
             try:
@@ -86,6 +93,8 @@ class TestBackendAPI(unittest.TestCase):
                 requests.delete(f"{API_URL}/sections/{section_id}")
             except Exception as e:
                 print(f"Error cleaning up section {section_id}: {e}")
+                
+        # Note: We don't clean up the test user as there's no delete user endpoint
 
     # Section Management API Tests
     def test_section_crud(self):
