@@ -586,6 +586,9 @@ const ArticlePage = () => {
             </div>
           </article>
 
+          {/* Comments Section */}
+          <CommentsSection articleId={article.id} />
+
           {/* Related Articles */}
           {relatedArticles.length > 0 && (
             <div className="mt-16 pt-8 border-t border-gray-800">
