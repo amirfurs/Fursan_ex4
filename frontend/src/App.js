@@ -517,20 +517,23 @@ const ArticlePage = () => {
                 {getSectionName(article.section_id)}
               </div>
               <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">{article.title}</h1>
-              <div className="flex items-center text-gray-400 border-l-4 border-red-500 pl-4">
-                <div>
-                  <div className="font-semibold text-white text-lg">By {article.author}</div>
-                  <div className="text-sm">
-                    Published {new Date(article.created_at).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
-                    {article.updated_at !== article.created_at && (
-                      <span> • Updated {new Date(article.updated_at).toLocaleDateString()}</span>
-                    )}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-gray-400 border-l-4 border-red-500 pl-4">
+                  <div>
+                    <div className="font-semibold text-white text-lg">By {article.author}</div>
+                    <div className="text-sm">
+                      Published {new Date(article.created_at).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                      {article.updated_at !== article.created_at && (
+                        <span> • Updated {new Date(article.updated_at).toLocaleDateString()}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
+                <LikeButton article={article} />
               </div>
             </header>
 
@@ -584,6 +587,376 @@ const ArticlePage = () => {
               </div>
             </div>
           )}
+        </div>
+      </div>
+    </PublicLayout>
+  );
+};
+
+// Like Button Component
+const LikeButton = ({ article }) => {
+  const { user, isAuthenticated } = useAuth();
+  const [isLiked, setIsLiked] = useState(article.is_liked || false);
+  const [likesCount, setLikesCount] = useState(article.likes_count || 0);
+  const [loading, setLoading] = useState(false);
+
+  const handleLike = async () => {
+    if (!isAuthenticated) {
+      alert("Please login to like articles!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (isLiked) {
+        await axios.delete(`${API}/articles/${article.id}/like`);
+        setIsLiked(false);
+        setLikesCount(prev => prev - 1);
+      } else {
+        await axios.post(`${API}/articles/${article.id}/like`);
+        setIsLiked(true);
+        setLikesCount(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      if (error.response?.data?.detail) {
+        alert(error.response.data.detail);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center space-x-2">
+      <button
+        onClick={handleLike}
+        disabled={loading}
+        className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+          isLiked 
+            ? 'bg-red-600 hover:bg-red-700 text-white' 
+            : 'bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white'
+        } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      >
+        <svg className="w-5 h-5" fill={isLiked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        <span>{likesCount}</span>
+      </button>
+      {!isAuthenticated && (
+        <span className="text-xs text-gray-500">Login to like</span>
+      )}
+    </div>
+  );
+};
+
+// Authentication Components
+const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    full_name: '',
+    password: '',
+    confirmPassword: '',
+    profile_picture: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormData({
+          ...formData,
+          profile_picture: e.target.result
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const registerData = {
+        username: formData.username,
+        email: formData.email,
+        full_name: formData.full_name,
+        password: formData.password,
+        profile_picture: formData.profile_picture
+      };
+
+      const response = await axios.post(`${API}/register`, registerData);
+      login(response.data.access_token, response.data.user);
+      navigate('/');
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError(error.response?.data?.detail || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-md mx-auto bg-gray-900 rounded-xl p-8 shadow-2xl">
+          <h1 className="text-3xl font-bold mb-8 text-center text-red-500">Create Account</h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-2">Username</label>
+              <input
+                type="text"
+                value={formData.username}
+                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Full Name</label>
+              <input
+                type="text"
+                value={formData.full_name}
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Profile Picture (Optional)</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+              />
+              {formData.profile_picture && (
+                <img
+                  src={formData.profile_picture}
+                  alt="Profile preview"
+                  className="mt-2 w-20 h-20 rounded-full object-cover"
+                />
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Password</label>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                required
+                minLength="6"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Confirm Password</label>
+              <input
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                required
+              />
+            </div>
+
+            {error && (
+              <div className="text-red-400 text-sm text-center">{error}</div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </button>
+          </form>
+
+          <div className="text-center mt-6">
+            <span className="text-gray-400">Already have an account? </span>
+            <Link to="/login" className="text-red-500 hover:text-red-400">Login here</Link>
+          </div>
+        </div>
+      </div>
+    </PublicLayout>
+  );
+};
+
+const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await axios.post(`${API}/login`, formData);
+      login(response.data.access_token, response.data.user);
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError(error.response?.data?.detail || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-md mx-auto bg-gray-900 rounded-xl p-8 shadow-2xl">
+          <h1 className="text-3xl font-bold mb-8 text-center text-red-500">Login</h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-2">Username</label>
+              <input
+                type="text"
+                value={formData.username}
+                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Password</label>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                className="w-full p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500"
+                required
+              />
+            </div>
+
+            {error && (
+              <div className="text-red-400 text-sm text-center">{error}</div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+
+          <div className="text-center mt-6">
+            <span className="text-gray-400">Don't have an account? </span>
+            <Link to="/register" className="text-red-500 hover:text-red-400">Register here</Link>
+          </div>
+        </div>
+      </div>
+    </PublicLayout>
+  );
+};
+
+const ProfilePage = () => {
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!user) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-12 text-center">
+          <div className="text-6xl mb-4">👤</div>
+          <p className="text-gray-400">Loading profile...</p>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-2xl mx-auto bg-gray-900 rounded-xl p-8 shadow-2xl">
+          <h1 className="text-3xl font-bold mb-8 text-center text-red-500">My Profile</h1>
+          
+          <div className="text-center mb-8">
+            {user.profile_picture ? (
+              <img
+                src={user.profile_picture}
+                alt={user.full_name}
+                className="w-32 h-32 rounded-full object-cover mx-auto mb-4"
+              />
+            ) : (
+              <div className="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center mx-auto mb-4">
+                <span className="text-4xl text-gray-400">👤</span>
+              </div>
+            )}
+            <h2 className="text-2xl font-bold">{user.full_name}</h2>
+            <p className="text-gray-400">@{user.username}</p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-gray-800 rounded-lg p-4">
+              <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+              <p className="text-white">{user.email}</p>
+            </div>
+            
+            <div className="bg-gray-800 rounded-lg p-4">
+              <label className="block text-sm font-medium text-gray-400 mb-1">Member Since</label>
+              <p className="text-white">{new Date(user.created_at).toLocaleDateString()}</p>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <Link to="/" className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+              Back to Articles
+            </Link>
+          </div>
         </div>
       </div>
     </PublicLayout>
