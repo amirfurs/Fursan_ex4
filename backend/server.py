@@ -567,6 +567,7 @@ async def search_content(
     q: str = "",
     section_id: Optional[str] = None,
     author: Optional[str] = None,
+    tags: Optional[str] = None,  # Comma-separated tags
     from_date: Optional[str] = None,
     to_date: Optional[str] = None,
     sort_by: str = "relevance"  # relevance, date_desc, date_asc
@@ -577,11 +578,12 @@ async def search_content(
     - q: search query (searches in title, content, author)
     - section_id: filter by specific section
     - author: filter by author name
+    - tags: filter by tags (comma-separated, e.g., "العقيدة,الفقه")
     - from_date: filter articles from this date (YYYY-MM-DD)
     - to_date: filter articles to this date (YYYY-MM-DD)
     - sort_by: sort results (relevance, date_desc, date_asc)
     """
-    if not q.strip() and not section_id and not author:
+    if not q.strip() and not section_id and not author and not tags:
         return {
             "articles": [],
             "sections": [],
@@ -611,7 +613,8 @@ async def search_content(
         article_filters["$or"] = [
             {"title": search_regex},
             {"content": search_regex},
-            {"author": search_regex}
+            {"author": search_regex},
+            {"tags": search_regex}  # Also search in tags
         ]
         section_filters["$or"] = [
             {"name": search_regex},
@@ -625,6 +628,12 @@ async def search_content(
     # Author filter
     if author:
         article_filters["author"] = {"$regex": author.strip(), "$options": "i"}
+    
+    # Tags filter
+    if tags:
+        tags_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+        if tags_list:
+            article_filters["tags"] = {"$in": tags_list}
     
     # Date range filter
     if from_date or to_date:
@@ -681,6 +690,7 @@ async def search_content(
         "filters": {
             "section_id": section_id,
             "author": author,
+            "tags": tags,
             "from_date": from_date,
             "to_date": to_date,
             "sort_by": sort_by
