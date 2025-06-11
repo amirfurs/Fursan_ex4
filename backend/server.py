@@ -679,12 +679,19 @@ async def search_content(
 @api_router.get("/search/suggestions")
 async def get_search_suggestions(q: str = ""):
     """
-    Get search suggestions based on existing content
+    Get search suggestions based on existing content with Arabic normalization
     """
     if not q.strip() or len(q.strip()) < 2:
         return {"suggestions": []}
     
-    search_regex = {"$regex": q.strip(), "$options": "i"}
+    # Normalize Arabic text for better search suggestions
+    normalized_query = q.strip()
+    # Handle hamza variations in suggestions
+    hamza_alef_pattern = normalized_query.replace('أ', '[أإآا]').replace('إ', '[أإآا]').replace('آ', '[أإآا]').replace('ا', '[أإآا]')
+    hamza_waw_pattern = hamza_alef_pattern.replace('ؤ', '[ؤو]').replace('و', '[ؤو]')
+    final_pattern = hamza_waw_pattern.replace('ئ', '[ئي]').replace('ي', '[ئي]')
+    
+    search_regex = {"$regex": final_pattern, "$options": "i"}
     
     # Get article titles and authors that match
     articles = await db.articles.find(
