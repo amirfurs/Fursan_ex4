@@ -1070,6 +1070,11 @@ const SearchPage = () => {
   });
   const [sections, setSections] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Search bar states for the results page
+  const [searchQuery, setSearchQuery] = useState(query);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     fetchSections();
@@ -1080,6 +1085,10 @@ const SearchPage = () => {
     }
   }, [query]);
 
+  useEffect(() => {
+    setSearchQuery(query);
+  }, [query]);
+
   const fetchSections = async () => {
     try {
       const response = await axios.get(`${API}/sections`);
@@ -1087,6 +1096,44 @@ const SearchPage = () => {
     } catch (error) {
       console.error("Error fetching sections:", error);
     }
+  };
+
+  const fetchSearchSuggestions = async (query) => {
+    if (query.length < 2) {
+      setSearchSuggestions([]);
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`${API}/search/suggestions?q=${encodeURIComponent(query)}`);
+      setSearchSuggestions(response.data.suggestions);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  };
+
+  const handleSearchInput = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    fetchSearchSuggestions(value);
+    setShowSuggestions(true);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSuggestions(false);
+      // Reload the page to trigger new search
+      window.location.reload();
+    }
+  };
+
+  const selectSuggestion = (suggestion) => {
+    setSearchQuery(suggestion);
+    navigate(`/search?q=${encodeURIComponent(suggestion)}`);
+    setShowSuggestions(false);
+    window.location.reload();
   };
 
   const performSearch = async (customFilters = {}) => {
