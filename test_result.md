@@ -319,6 +319,33 @@ frontend:
         agent: "testing"
         comment: "Successfully tested the logo management UI. The logo upload functionality works correctly, and the logo is displayed dynamically throughout the site."
 
+  - task: "Search System API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented comprehensive search system with endpoints: GET /api/search for searching articles and sections with filters (section_id, author, date range, sort_by), and GET /api/search/suggestions for search suggestions. Supports Arabic and English text search with regex matching."
+      - working: true
+        agent: "testing"
+        comment: "Successfully tested all search functionality. Basic search with Arabic/English terms working correctly. All filters (section, author, date range, sorting) function as expected. Search suggestions provide relevant results. Edge cases handled properly. Excellent performance with ~0.03s response times. The search system is ready for production use."
+
+  - task: "Search System UI"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented comprehensive search UI with search bar in header (desktop and mobile), search suggestions dropdown, dedicated search results page with advanced filters, highlighted search terms in results, and responsive design with Arabic support."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
