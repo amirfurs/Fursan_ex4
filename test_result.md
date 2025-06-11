@@ -329,6 +329,7 @@ test_plan:
   current_focus:
     - "Public Interface (Visitor View)"
     - "Admin Panel Interface"
+    - "Search System API"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
