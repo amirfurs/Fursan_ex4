@@ -2478,24 +2478,95 @@ const AdminPanel = () => {
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">الوسوم</label>
-                <div className="flex gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyPress={handleTagKeyPress}
-                    className="flex-1 p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 arabic-content"
-                    placeholder="أدخل وسم جديد..."
-                  />
-                  <button
-                    type="button"
-                    onClick={addTag}
-                    className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors"
-                  >
-                    إضافة
-                  </button>
+                <div className="relative">
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={tagInput}
+                      onChange={(e) => {
+                        setTagInput(e.target.value);
+                        setShowTagSuggestions(e.target.value.length > 0);
+                      }}
+                      onKeyPress={handleTagKeyPress}
+                      onFocus={() => setShowTagSuggestions(tagInput.length > 0)}
+                      onBlur={() => setTimeout(() => setShowTagSuggestions(false), 200)}
+                      className="flex-1 p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 arabic-content"
+                      placeholder="أدخل وسم جديد..."
+                    />
+                    <button
+                      type="button"
+                      onClick={addTag}
+                      className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      إضافة
+                    </button>
+                  </div>
+                  
+                  {/* Tag Suggestions */}
+                  {showTagSuggestions && availableTags.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
+                      <div className="p-2">
+                        <div className="text-xs text-gray-400 mb-2">الوسوم المقترحة:</div>
+                        {availableTags
+                          .filter(tag => 
+                            tag.name.toLowerCase().includes(tagInput.toLowerCase()) && 
+                            !newArticle.tags.includes(tag.name)
+                          )
+                          .slice(0, 10)
+                          .map((tag) => (
+                            <button
+                              key={tag.name}
+                              type="button"
+                              onClick={() => {
+                                setNewArticle({
+                                  ...newArticle,
+                                  tags: [...newArticle.tags, tag.name]
+                                });
+                                setTagInput("");
+                                setShowTagSuggestions(false);
+                              }}
+                              className="block w-full text-right px-3 py-2 hover:bg-gray-800 hover:text-red-400 transition-colors rounded"
+                            >
+                              <span className="font-medium">#{tag.name}</span>
+                              <span className="text-xs text-gray-500 mr-2">({tag.count} مقالة)</span>
+                            </button>
+                          ))
+                        }
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="flex flex-wrap gap-2">
+                
+                {/* Popular Tags */}
+                {availableTags.length > 0 && (
+                  <div className="mb-3">
+                    <div className="text-xs text-gray-400 mb-2">الوسوم الأكثر استخداماً:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {availableTags
+                        .filter(tag => !newArticle.tags.includes(tag.name))
+                        .slice(0, 8)
+                        .map((tag) => (
+                          <button
+                            key={tag.name}
+                            type="button"
+                            onClick={() => {
+                              setNewArticle({
+                                ...newArticle,
+                                tags: [...newArticle.tags, tag.name]
+                              });
+                            }}
+                            className="bg-gray-700 hover:bg-red-600/30 text-gray-300 hover:text-red-400 px-2 py-1 rounded-full text-xs transition-colors"
+                          >
+                            #{tag.name} ({tag.count})
+                          </button>
+                        ))
+                      }
+                    </div>
+                  </div>
+                )}
+                
+                {/* Selected Tags */}
+                <div className="flex flex-wrap gap-2 mb-2">
                   {newArticle.tags.map((tag, index) => (
                     <span
                       key={index}
@@ -2512,7 +2583,7 @@ const AdminPanel = () => {
                     </span>
                   ))}
                 </div>
-                <p className="text-xs text-gray-400 mt-1">اضغط Enter أو الزر "إضافة" لإضافة الوسم</p>
+                <p className="text-xs text-gray-400">اضغط Enter أو الزر "إضافة" لإضافة وسم جديد، أو انقر على الوسوم المقترحة</p>
               </div>
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">محتوى المقال</label>
