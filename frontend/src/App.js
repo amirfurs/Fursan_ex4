@@ -242,6 +242,9 @@ const PublicLayout = ({ children }) => {
                     </div>
                   </div>
                 )}
+                <Link to="/tags" className="text-lg hover:text-red-400 transition-colors font-medium">
+                  الوسوم
+                </Link>
               </nav>
               
               {/* User Authentication */}
