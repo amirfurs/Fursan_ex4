@@ -738,6 +738,39 @@ async def get_search_suggestions(q: str = ""):
     
     return {"suggestions": suggestions[:10]}  # Return top 10 suggestions
 
+# Tags endpoints
+@api_router.get("/tags", response_model=TagsResponse)
+async def get_all_tags():
+    """
+    Get all tags with their counts
+    """
+    # Aggregate tags from all articles
+    pipeline = [
+        {"$unwind": "$tags"},
+        {"$group": {"_id": "$tags", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$project": {"name": "$_id", "count": 1, "_id": 0}}
+    ]
+    
+    tags_cursor = db.articles.aggregate(pipeline)
+    tags_list = await tags_cursor.to_list(1000)
+    
+    tags = [Tag(**tag) for tag in tags_list]
+    return TagsResponse(tags=tags)
+
+@api_router.get("/tags/{tag_name}/articles", response_model=List[ArticleResponse])
+async def get_articles_by_tag(tag_name: str, current_user: Optional[User] = Depends(lambda: None)):
+    """
+    Get all articles with a specific tag
+    """
+    articles = await db.articles.find({"tags": tag_name}).to_list(1000)
+    result = []
+    user_id = None
+    for article in articles:
+        article_response = await get_article_with_like_status(article, user_id)
+        result.append(article_response)
+    return result
+
 # Site Settings / Logo Management endpoints
 @api_router.get("/settings/logo")
 async def get_site_logo():
