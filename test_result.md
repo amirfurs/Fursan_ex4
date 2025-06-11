@@ -375,6 +375,7 @@ test_plan:
     - "Public Interface (Visitor View)"
     - "Admin Panel Interface"
     - "Search System API"
+    - "Tag System API"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
