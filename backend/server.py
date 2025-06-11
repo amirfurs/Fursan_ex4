@@ -141,6 +141,7 @@ class ArticleUpdate(BaseModel):
     section_id: Optional[str] = None
     image_data: Optional[str] = None
     image_name: Optional[str] = None
+    tags: Optional[List[str]] = None
 
 class ArticleResponse(BaseModel):
     id: str
