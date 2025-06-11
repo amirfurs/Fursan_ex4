@@ -201,6 +201,7 @@ class LogoUpdate(BaseModel):
 class SearchFilters(BaseModel):
     section_id: Optional[str] = None
     author: Optional[str] = None
+    tags: Optional[str] = None
     from_date: Optional[str] = None
     to_date: Optional[str] = None
     sort_by: str = "relevance"
