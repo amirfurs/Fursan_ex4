@@ -339,6 +339,9 @@ const PublicLayout = ({ children }) => {
                 </div>
               </details>
             )}
+            <Link to="/tags" className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              الوسوم
+            </Link>
           </div>
         </div>
       </div>
