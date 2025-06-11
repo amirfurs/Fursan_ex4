@@ -411,6 +411,7 @@ const HomePage = () => {
   const [articles, setArticles] = useState([]);
   const [sections, setSections] = useState([]);
   const [featuredArticles, setFeaturedArticles] = useState([]);
+  const [popularTags, setPopularTags] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -419,13 +420,15 @@ const HomePage = () => {
 
   const fetchData = async () => {
     try {
-      const [articlesRes, sectionsRes] = await Promise.all([
+      const [articlesRes, sectionsRes, tagsRes] = await Promise.all([
         axios.get(`${API}/articles`),
-        axios.get(`${API}/sections`)
+        axios.get(`${API}/sections`),
+        axios.get(`${API}/tags`)
       ]);
       const allArticles = articlesRes.data;
       setArticles(allArticles);
       setSections(sectionsRes.data);
+      setPopularTags(tagsRes.data.tags.slice(0, 10)); // Top 10 tags
       
       // Featured articles are the 3 most recent
       setFeaturedArticles(allArticles.slice(0, 3));
