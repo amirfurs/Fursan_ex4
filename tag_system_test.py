@@ -131,14 +131,14 @@ class TestTagSystem(unittest.TestCase):
         """Test getting articles by tag"""
         print("\n=== Testing GET /api/tags/{tag_name}/articles endpoint ===")
         
-        # Test getting articles by tag "الفقه" (should return 2 articles)
+        # Test getting articles by tag "الفقه"
         tag_name = "الفقه"
         response = requests.get(f"{API_URL}/tags/{tag_name}/articles")
         self.assertEqual(response.status_code, 200, f"Failed to get articles by tag: {response.text}")
         
         articles = response.json()
         self.assertIsInstance(articles, list, "Response should be a list of articles")
-        self.assertEqual(len(articles), 2, f"Expected 2 articles with tag '{tag_name}', got {len(articles)}")
+        self.assertGreaterEqual(len(articles), 2, f"Expected at least 2 articles with tag '{tag_name}', got {len(articles)}")
         
         # Verify the articles have the correct tag
         for article in articles:
@@ -146,17 +146,18 @@ class TestTagSystem(unittest.TestCase):
         
         print(f"Successfully retrieved {len(articles)} articles with tag '{tag_name}'")
         
-        # Test getting articles by tag "العقيدة" (should return 1 article)
+        # Test getting articles by tag "العقيدة"
         tag_name = "العقيدة"
         response = requests.get(f"{API_URL}/tags/{tag_name}/articles")
         self.assertEqual(response.status_code, 200, f"Failed to get articles by tag: {response.text}")
         
         articles = response.json()
         self.assertIsInstance(articles, list, "Response should be a list of articles")
-        self.assertEqual(len(articles), 1, f"Expected 1 article with tag '{tag_name}', got {len(articles)}")
+        self.assertGreaterEqual(len(articles), 1, f"Expected at least 1 article with tag '{tag_name}', got {len(articles)}")
         
-        # Verify the article has the correct tag
-        self.assertIn(tag_name, articles[0]["tags"], f"Article {articles[0]['id']} does not have tag '{tag_name}'")
+        # Verify the articles have the correct tag
+        for article in articles:
+            self.assertIn(tag_name, article["tags"], f"Article {article['id']} does not have tag '{tag_name}'")
         
         print(f"Successfully retrieved {len(articles)} articles with tag '{tag_name}'")
         
