@@ -132,6 +132,7 @@ class ArticleCreate(BaseModel):
     section_id: str
     image_data: Optional[str] = None
     image_name: Optional[str] = None
+    tags: List[str] = Field(default_factory=list)
 
 class ArticleUpdate(BaseModel):
     title: Optional[str] = None
