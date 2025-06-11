@@ -213,6 +213,21 @@ backend:
         agent: "testing"
         comment: "Successfully tested all search functionality. Created search_test.py and arabic_search_test.py to verify search capabilities. Basic search works with both Arabic and English terms. Search filters (section_id, author, date range, sorting) function correctly. Search suggestions provide relevant results for partial terms. The system handles edge cases properly (empty searches, non-existent terms, special characters). Performance testing shows excellent response times (average 0.036 seconds per request)."
 
+  - task: "Tag System API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented tag system with GET /api/tags, GET /api/tags/{tag_name}/articles endpoints and tag filtering in search API."
+      - working: true
+        agent: "testing"
+        comment: "Successfully tested all tag system endpoints. Created tag_system_test.py to verify tag functionality. GET /api/tags returns all tags with their counts correctly. GET /api/tags/{tag_name}/articles returns articles filtered by tag. Search API properly filters articles by tags using the 'tags' parameter. Articles can be created with multiple tags, and tag counts are updated correctly. Search suggestions include tags with # prefix. Advanced search works with text query and tag filters combined. All tests passed successfully with Arabic tag content."
+
 frontend:
   - task: "Public Interface (Visitor View)"
     implemented: true
