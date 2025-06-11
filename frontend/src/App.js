@@ -1108,11 +1108,13 @@ const SearchPage = () => {
   const [filters, setFilters] = useState({
     section_id: '',
     author: '',
+    tags: '',
     from_date: '',
     to_date: '',
     sort_by: 'relevance'
   });
   const [sections, setSections] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   
   // Search bar states for the results page
@@ -1122,12 +1124,22 @@ const SearchPage = () => {
 
   useEffect(() => {
     fetchSections();
+    fetchAvailableTags();
     if (query) {
       performSearch();
     } else {
       setLoading(false);
     }
   }, [query]);
+
+  const fetchAvailableTags = async () => {
+    try {
+      const response = await axios.get(`${API}/tags`);
+      setAvailableTags(response.data.tags);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+    }
+  };
 
   useEffect(() => {
     setSearchQuery(query);
