@@ -215,6 +215,13 @@ class SearchResult(BaseModel):
 class SearchSuggestions(BaseModel):
     suggestions: List[str]
 
+class Tag(BaseModel):
+    name: str
+    count: int
+
+class TagsResponse(BaseModel):
+    tags: List[Tag]
+
 # User Authentication Endpoints
 @api_router.post("/register", response_model=Token)
 async def register_user(user: UserCreate):
