@@ -2086,8 +2086,10 @@ const AdminPanel = () => {
         author: "",
         section_id: "",
         image_data: "",
-        image_name: ""
+        image_name: "",
+        tags: []
       });
+      setTagInput("");
       setShowAddArticle(false);
       fetchArticles();
     } catch (error) {
