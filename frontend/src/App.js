@@ -2443,6 +2443,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/article/:id" element={<ArticlePage />} />
             <Route path="/section/:id" element={<SectionPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfilePage />} />
