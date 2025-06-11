@@ -172,7 +172,7 @@ const PublicLayout = ({ children }) => {
             </Link>
             <div className="flex items-center space-x-6 space-x-reverse">
               {/* Search Bar */}
-              <div className="relative hidden lg:block">
+              <div className="relative hidden md:block">
                 <form onSubmit={handleSearchSubmit} className="relative">
                   <input
                     type="text"
