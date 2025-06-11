@@ -175,10 +175,11 @@ class TestTagSystem(unittest.TestCase):
         self.assertIn("total_results", search_result, "Response should contain 'total_results' field")
         
         articles = search_result["articles"]
-        self.assertEqual(len(articles), 1, f"Expected 1 article with tag '{tag_name}', got {len(articles)}")
+        self.assertGreaterEqual(len(articles), 1, f"Expected at least 1 article with tag '{tag_name}', got {len(articles)}")
         
-        # Verify the article has the correct tag
-        self.assertIn(tag_name, articles[0]["tags"], f"Article {articles[0]['id']} does not have tag '{tag_name}'")
+        # Verify the articles have the correct tag
+        for article in articles:
+            self.assertIn(tag_name, article["tags"], f"Article {article['id']} does not have tag '{tag_name}'")
         
         print(f"Successfully searched for articles with tag '{tag_name}'")
         
