@@ -1056,6 +1056,7 @@ const LikeButton = ({ article }) => {
 };
 
 const SearchPage = () => {
+  const navigate = useNavigate();
   const [searchParams] = useState(() => new URLSearchParams(window.location.search));
   const query = searchParams.get('q') || '';
   const [results, setResults] = useState(null);
