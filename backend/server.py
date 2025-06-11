@@ -194,6 +194,23 @@ class LogoUpdate(BaseModel):
     logo_data: Optional[str] = None
     logo_name: Optional[str] = None
 
+class SearchFilters(BaseModel):
+    section_id: Optional[str] = None
+    author: Optional[str] = None
+    from_date: Optional[str] = None
+    to_date: Optional[str] = None
+    sort_by: str = "relevance"
+
+class SearchResult(BaseModel):
+    articles: List[ArticleResponse]
+    sections: List[Section]
+    total_results: int
+    query: str
+    filters: SearchFilters
+
+class SearchSuggestions(BaseModel):
+    suggestions: List[str]
+
 # User Authentication Endpoints
 @api_router.post("/register", response_model=Token)
 async def register_user(user: UserCreate):
