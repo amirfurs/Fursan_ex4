@@ -298,3 +298,88 @@ input[type="file"] {
 input[type="file"]::file-selector-button {
   @apply bg-red-600 hover:bg-red-700 text-white border-0 py-2 px-4 rounded mr-4 cursor-pointer transition-colors;
 }
+
+/* Search specific styles */
+.search-highlight mark {
+  background-color: #fde047;
+  color: #1f2937;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+/* Search suggestions dropdown */
+.search-suggestions {
+  max-height: 16rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ef4444 #1f2937;
+}
+
+/* Search result card hover effect */
+.search-result-card {
+  transition: all 0.3s ease;
+}
+
+.search-result-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15);
+}
+
+/* Filter toggle animation */
+.filter-toggle {
+  transition: transform 0.3s ease;
+}
+
+.filter-toggle.expanded {
+  transform: rotate(180deg);
+}
+
+/* Search input focus state */
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Mobile search adjustments */
+@media (max-width: 768px) {
+  .search-filters {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .search-result-mobile {
+    flex-direction: column;
+  }
+  
+  .search-result-mobile .search-image {
+    width: 100%;
+    height: 12rem;
+  }
+}
+
+/* Enhanced search result styling */
+.search-no-results {
+  background: radial-gradient(ellipse at center, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
+}
+
+/* Search autocomplete styling */
+.search-autocomplete {
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Search loading state */
+.search-loading {
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
