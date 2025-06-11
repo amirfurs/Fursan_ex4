@@ -615,6 +615,25 @@ const HomePage = () => {
                   <p className="text-gray-400 line-clamp-3 mb-4">
                     {article.content.slice(0, 120)}...
                   </p>
+                  {/* Article Tags */}
+                  {article.tags && article.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {article.tags.slice(0, 3).map((tag, tagIndex) => (
+                        <Link
+                          key={tagIndex}
+                          to={`/tag/${encodeURIComponent(tag)}`}
+                          className="bg-red-600/20 text-red-400 px-2 py-1 rounded-full text-xs hover:bg-red-600/30 transition-colors"
+                        >
+                          #{tag}
+                        </Link>
+                      ))}
+                      {article.tags.length > 3 && (
+                        <span className="text-gray-500 text-xs px-2 py-1">
+                          +{article.tags.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  )}
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <span className="font-medium">{article.author}</span>
                     <div className="flex items-center space-x-1 space-x-reverse">
