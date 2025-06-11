@@ -1955,8 +1955,10 @@ const AdminPanel = () => {
     author: "",
     section_id: "",
     image_data: "",
-    image_name: ""
+    image_name: "",
+    tags: []
   });
+  const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) {
