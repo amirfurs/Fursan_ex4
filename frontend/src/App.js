@@ -2426,6 +2426,44 @@ const AdminPanel = () => {
                   />
                 )}
               </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">الوسوم</label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={handleTagKeyPress}
+                    className="flex-1 p-3 bg-gray-800 rounded-lg text-white border border-gray-700 focus:border-red-500 arabic-content"
+                    placeholder="أدخل وسم جديد..."
+                  />
+                  <button
+                    type="button"
+                    onClick={addTag}
+                    className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors"
+                  >
+                    إضافة
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {newArticle.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-red-600 text-white px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                    >
+                      #{tag}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="hover:bg-red-700 rounded-full w-5 h-5 flex items-center justify-center"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-1">اضغط Enter أو الزر "إضافة" لإضافة الوسم</p>
+              </div>
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">محتوى المقال</label>
                 <textarea
