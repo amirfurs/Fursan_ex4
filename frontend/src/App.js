@@ -2312,7 +2312,7 @@ const AdminPanel = () => {
       {/* Admin Stats */}
       <div className="bg-gray-900 border-b border-gray-700">
         <div className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             <div className="bg-gray-800 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-red-500 arabic-numbers">{articles.length}</div>
               <div className="text-gray-400 text-sm">إجمالي المقالات</div>
@@ -2320,6 +2320,10 @@ const AdminPanel = () => {
             <div className="bg-gray-800 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-red-500 arabic-numbers">{sections.length}</div>
               <div className="text-gray-400 text-sm">الأقسام</div>
+            </div>
+            <div className="bg-gray-800 rounded-lg p-4 text-center">
+              <div className="text-2xl font-bold text-red-500 arabic-numbers">{availableTags.length}</div>
+              <div className="text-gray-400 text-sm">الوسوم</div>
             </div>
             <div className="bg-gray-800 rounded-lg p-4 text-center">
               <div className="text-2xl font-bold text-red-500 arabic-numbers">
