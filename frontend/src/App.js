@@ -1055,6 +1055,288 @@ const LikeButton = ({ article }) => {
   );
 };
 
+const SearchPage = () => {
+  const [searchParams] = new URLSearchParams(window.location.search);
+  const query = searchParams.get('q') || '';
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    section_id: '',
+    author: '',
+    from_date: '',
+    to_date: '',
+    sort_by: 'relevance'
+  });
+  const [sections, setSections] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    fetchSections();
+    if (query) {
+      performSearch();
+    } else {
+      setLoading(false);
+    }
+  }, [query]);
+
+  const fetchSections = async () => {
+    try {
+      const response = await axios.get(`${API}/sections`);
+      setSections(response.data);
+    } catch (error) {
+      console.error("Error fetching sections:", error);
+    }
+  };
+
+  const performSearch = async (customFilters = {}) => {
+    setLoading(true);
+    try {
+      const searchFilters = { ...filters, ...customFilters };
+      const params = new URLSearchParams({
+        q: query,
+        ...Object.fromEntries(Object.entries(searchFilters).filter(([_, v]) => v))
+      });
+      
+      const response = await axios.get(`${API}/search?${params}`);
+      setResults(response.data);
+    } catch (error) {
+      console.error("Error performing search:", error);
+      setResults({
+        articles: [],
+        sections: [],
+        total_results: 0,
+        query: query
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (key, value) => {
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    performSearch(newFilters);
+  };
+
+  const getSectionName = (sectionId) => {
+    const section = sections.find(s => s.id === sectionId);
+    return section ? section.name : "قسم غير معروف";
+  };
+
+  const highlightSearchTerm = (text, term) => {
+    if (!term) return text;
+    const regex = new RegExp(`(${term})`, 'gi');
+    return text.replace(regex, '<mark class="bg-yellow-300 text-black">$1</mark>');
+  };
+
+  if (loading) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="animate-pulse">
+            <div className="text-6xl mb-4">🔍</div>
+            <p className="text-gray-400">جارٍ البحث...</p>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  if (!query) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="text-8xl mb-6">🔍</div>
+          <h1 className="text-4xl font-bold mb-4 arabic-title">ابحث في المقالات</h1>
+          <p className="text-gray-400 text-lg mb-8">استخدم شريط البحث أعلى الصفحة للعثور على المقالات والأقسام</p>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-8">
+        {/* Search Results Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2 arabic-title">
+            نتائج البحث عن: <span className="text-red-500">"{query}"</span>
+          </h1>
+          <p className="text-gray-400">
+            {results?.total_results || 0} نتيجة
+          </p>
+        </div>
+
+        {/* Search Filters */}
+        <div className="bg-gray-900 rounded-lg p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">خيارات البحث المتقدم</h3>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="lg:hidden text-red-500 hover:text-red-400"
+            >
+              {showFilters ? 'إخفاء' : 'عرض'} الفلاتر
+            </button>
+          </div>
+          
+          <div className={`grid grid-cols-1 lg:grid-cols-5 gap-4 ${showFilters ? 'block' : 'hidden lg:grid'}`}>
+            <div>
+              <label className="block text-sm font-medium mb-2">القسم</label>
+              <select
+                value={filters.section_id}
+                onChange={(e) => handleFilterChange('section_id', e.target.value)}
+                className="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              >
+                <option value="">جميع الأقسام</option>
+                {sections.map((section) => (
+                  <option key={section.id} value={section.id}>
+                    {section.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">الكاتب</label>
+              <input
+                type="text"
+                value={filters.author}
+                onChange={(e) => handleFilterChange('author', e.target.value)}
+                placeholder="اسم الكاتب"
+                className="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">من تاريخ</label>
+              <input
+                type="date"
+                value={filters.from_date}
+                onChange={(e) => handleFilterChange('from_date', e.target.value)}
+                className="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">إلى تاريخ</label>
+              <input
+                type="date"
+                value={filters.to_date}
+                onChange={(e) => handleFilterChange('to_date', e.target.value)}
+                className="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">ترتيب النتائج</label>
+              <select
+                value={filters.sort_by}
+                onChange={(e) => handleFilterChange('sort_by', e.target.value)}
+                className="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              >
+                <option value="relevance">الأكثر صلة</option>
+                <option value="date_desc">الأحدث أولاً</option>
+                <option value="date_asc">الأقدم أولاً</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Results */}
+        {results?.total_results === 0 ? (
+          <div className="text-center py-16">
+            <div className="text-8xl mb-6">😞</div>
+            <h3 className="text-3xl font-bold mb-4">لم نجد أي نتائج</h3>
+            <p className="text-gray-400 text-lg mb-8">
+              جرب كلمات مختلفة أو تقليل الفلاتر للحصول على نتائج أكثر
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {/* Sections Results */}
+            {results?.sections?.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4 text-red-500">الأقسام ({results.sections.length})</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {results.sections.map((section) => (
+                    <Link
+                      key={section.id}
+                      to={`/section/${section.id}`}
+                      className="bg-gray-900 rounded-lg p-6 hover:bg-gray-800 transition-colors"
+                    >
+                      <h3 className="text-xl font-bold mb-2 text-red-400" 
+                          dangerouslySetInnerHTML={{ __html: highlightSearchTerm(section.name, query) }} />
+                      {section.description && (
+                        <p className="text-gray-400" 
+                           dangerouslySetInnerHTML={{ __html: highlightSearchTerm(section.description, query) }} />
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Articles Results */}
+            {results?.articles?.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4 text-red-500">المقالات ({results.articles.length})</h2>
+                <div className="space-y-6">
+                  {results.articles.map((article) => (
+                    <div key={article.id} className="bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-colors">
+                      <div className="flex flex-col md:flex-row">
+                        {article.image_data && (
+                          <div className="md:w-48 h-48 md:h-auto">
+                            <img
+                              src={article.image_data}
+                              alt={article.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 p-6">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                              <Link to={`/article/${article.id}`}>
+                                <h3 className="text-xl font-bold mb-2 hover:text-red-400 transition-colors arabic-title"
+                                    dangerouslySetInnerHTML={{ __html: highlightSearchTerm(article.title, query) }} />
+                              </Link>
+                              <div className="flex items-center text-sm text-gray-500 mb-3">
+                                <span className="font-medium" 
+                                      dangerouslySetInnerHTML={{ __html: highlightSearchTerm(article.author, query) }} />
+                                <span className="mx-2">•</span>
+                                <span>{getSectionName(article.section_id)}</span>
+                                <span className="mx-2">•</span>
+                                <span>{new Date(article.created_at).toLocaleDateString('ar-SA')}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-gray-400 line-clamp-3 mb-4"
+                             dangerouslySetInnerHTML={{ __html: highlightSearchTerm(article.content.slice(0, 200) + '...', query) }} />
+                          <div className="flex items-center justify-between">
+                            <Link
+                              to={`/article/${article.id}`}
+                              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              اقرأ المقال
+                            </Link>
+                            <div className="flex items-center space-x-4 space-x-reverse text-sm text-gray-500">
+                              <span>❤️ {article.likes_count}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </PublicLayout>
+  );
+};
+
 // Authentication Components
 const RegisterPage = () => {
   const navigate = useNavigate();
