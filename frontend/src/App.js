@@ -2036,6 +2036,33 @@ const AdminPanel = () => {
     }
   };
 
+  // Tag management functions
+  const addTag = (e) => {
+    e.preventDefault();
+    const tag = tagInput.trim();
+    if (tag && !newArticle.tags.includes(tag)) {
+      setNewArticle({
+        ...newArticle,
+        tags: [...newArticle.tags, tag]
+      });
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tagToRemove) => {
+    setNewArticle({
+      ...newArticle,
+      tags: newArticle.tags.filter(tag => tag !== tagToRemove)
+    });
+  };
+
+  const handleTagKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTag(e);
+    }
+  };
+
   const createSection = async (e) => {
     e.preventDefault();
     try {
