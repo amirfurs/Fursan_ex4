@@ -1997,14 +1997,26 @@ const AdminPanel = () => {
     tags: []
   });
   const [tagInput, setTagInput] = useState("");
+  const [availableTags, setAvailableTags] = useState([]);
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchSections();
       fetchArticles();
       fetchCurrentLogo();
+      fetchAvailableTags();
     }
   }, [isAuthenticated]);
+
+  const fetchAvailableTags = async () => {
+    try {
+      const response = await axios.get(`${API}/tags`);
+      setAvailableTags(response.data.tags);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+    }
+  };
 
   const fetchCurrentLogo = async () => {
     try {
