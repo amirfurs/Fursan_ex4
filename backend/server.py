@@ -533,6 +533,164 @@ async def delete_comment(comment_id: str, current_user: User = Depends(get_curre
     
     return {"message": "Comment deleted successfully"}
 
+# Search endpoints
+@api_router.get("/search")
+async def search_content(
+    q: str = "",
+    section_id: Optional[str] = None,
+    author: Optional[str] = None,
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
+    sort_by: str = "relevance"  # relevance, date_desc, date_asc
+):
+    """
+    Search for articles and sections
+    Parameters:
+    - q: search query (searches in title, content, author)
+    - section_id: filter by specific section
+    - author: filter by author name
+    - from_date: filter articles from this date (YYYY-MM-DD)
+    - to_date: filter articles to this date (YYYY-MM-DD)
+    - sort_by: sort results (relevance, date_desc, date_asc)
+    """
+    if not q.strip() and not section_id and not author:
+        return {
+            "articles": [],
+            "sections": [],
+            "total_results": 0,
+            "query": q
+        }
+    
+    # Build search filters
+    article_filters = {}
+    section_filters = {}
+    
+    # Text search using regex for MongoDB
+    if q.strip():
+        search_regex = {"$regex": q.strip(), "$options": "i"}  # case insensitive
+        article_filters["$or"] = [
+            {"title": search_regex},
+            {"content": search_regex},
+            {"author": search_regex}
+        ]
+        section_filters["$or"] = [
+            {"name": search_regex},
+            {"description": search_regex}
+        ]
+    
+    # Section filter
+    if section_id:
+        article_filters["section_id"] = section_id
+    
+    # Author filter
+    if author:
+        article_filters["author"] = {"$regex": author.strip(), "$options": "i"}
+    
+    # Date range filter
+    if from_date or to_date:
+        date_filter = {}
+        if from_date:
+            try:
+                from datetime import datetime
+                date_filter["$gte"] = datetime.strptime(from_date, "%Y-%m-%d")
+            except ValueError:
+                pass
+        if to_date:
+            try:
+                from datetime import datetime
+                date_filter["$lte"] = datetime.strptime(to_date, "%Y-%m-%d")
+            except ValueError:
+                pass
+        if date_filter:
+            article_filters["created_at"] = date_filter
+    
+    # Execute searches
+    articles_cursor = db.articles.find(article_filters)
+    sections_cursor = db.sections.find(section_filters)
+    
+    # Apply sorting
+    if sort_by == "date_desc":
+        articles_cursor = articles_cursor.sort("created_at", -1)
+    elif sort_by == "date_asc":
+        articles_cursor = articles_cursor.sort("created_at", 1)
+    # For relevance, we'll use default order (could be enhanced with scoring)
+    
+    # Get results
+    articles = await articles_cursor.limit(50).to_list(50)  # Limit to 50 results
+    sections = await sections_cursor.limit(20).to_list(20)  # Limit to 20 results
+    
+    # Process articles to include like status for authenticated users
+    processed_articles = []
+    user_id = None  # Could be enhanced to get current user if authenticated
+    
+    for article in articles:
+        article_response = await get_article_with_like_status(article, user_id)
+        processed_articles.append(article_response)
+    
+    # Convert sections to proper format
+    processed_sections = [Section(**section) for section in sections]
+    
+    # Calculate total results
+    total_results = len(processed_articles) + len(processed_sections)
+    
+    return {
+        "articles": processed_articles,
+        "sections": processed_sections,
+        "total_results": total_results,
+        "query": q,
+        "filters": {
+            "section_id": section_id,
+            "author": author,
+            "from_date": from_date,
+            "to_date": to_date,
+            "sort_by": sort_by
+        }
+    }
+
+@api_router.get("/search/suggestions")
+async def get_search_suggestions(q: str = ""):
+    """
+    Get search suggestions based on existing content
+    """
+    if not q.strip() or len(q.strip()) < 2:
+        return {"suggestions": []}
+    
+    search_regex = {"$regex": q.strip(), "$options": "i"}
+    
+    # Get article titles and authors that match
+    articles = await db.articles.find(
+        {"$or": [
+            {"title": search_regex},
+            {"author": search_regex}
+        ]},
+        {"title": 1, "author": 1}
+    ).limit(10).to_list(10)
+    
+    # Get section names that match
+    sections = await db.sections.find(
+        {"name": search_regex},
+        {"name": 1}
+    ).limit(5).to_list(5)
+    
+    suggestions = []
+    
+    # Add unique titles
+    for article in articles:
+        if article["title"].lower() not in [s.lower() for s in suggestions]:
+            suggestions.append(article["title"])
+    
+    # Add unique authors
+    for article in articles:
+        if article["author"].lower() not in [s.lower() for s in suggestions]:
+            suggestions.append(article["author"])
+    
+    # Add section names
+    for section in sections:
+        if section["name"].lower() not in [s.lower() for s in suggestions]:
+            suggestions.append(section["name"])
+    
+    return {"suggestions": suggestions[:10]}  # Return top 10 suggestions
+
 # Site Settings / Logo Management endpoints
 @api_router.get("/settings/logo")
 async def get_site_logo():
