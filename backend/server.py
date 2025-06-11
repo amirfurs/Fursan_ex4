@@ -730,6 +730,17 @@ async def get_search_suggestions(q: str = ""):
         {"name": 1}
     ).limit(5).to_list(5)
     
+    # Get tags that match
+    pipeline = [
+        {"$unwind": "$tags"},
+        {"$match": {"tags": search_regex}},
+        {"$group": {"_id": "$tags", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 5}
+    ]
+    tags_cursor = db.articles.aggregate(pipeline)
+    tags_list = await tags_cursor.to_list(5)
+    
     suggestions = []
     
     # Add unique titles
@@ -746,6 +757,12 @@ async def get_search_suggestions(q: str = ""):
     for section in sections:
         if section["name"].lower() not in [s.lower() for s in suggestions]:
             suggestions.append(section["name"])
+    
+    # Add tags with # prefix
+    for tag in tags_list:
+        tag_name = f"#{tag['_id']}"
+        if tag_name.lower() not in [s.lower() for s in suggestions]:
+            suggestions.append(tag_name)
     
     return {"suggestions": suggestions[:10]}  # Return top 10 suggestions
 
