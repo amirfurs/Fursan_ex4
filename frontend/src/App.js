@@ -2363,6 +2363,12 @@ const AdminPanel = () => {
             >
               <span className="ml-2">🖼️</span> إدارة الشعار
             </button>
+            <Link
+              to="/tags"
+              className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
+            >
+              <span className="ml-2">🏷️</span> إدارة الوسوم
+            </Link>
           </div>
         </div>
       </div>
