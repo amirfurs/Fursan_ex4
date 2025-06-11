@@ -120,6 +120,7 @@ class Article(BaseModel):
     section_id: str
     image_data: Optional[str] = None
     image_name: Optional[str] = None
+    tags: List[str] = Field(default_factory=list)
     likes_count: int = 0
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
