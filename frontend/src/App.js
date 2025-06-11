@@ -1327,7 +1327,7 @@ const SearchPage = () => {
             </button>
           </div>
           
-          <div className={`grid grid-cols-1 lg:grid-cols-5 gap-4 ${showFilters ? 'block' : 'hidden lg:grid'}`}>
+          <div className={`grid grid-cols-1 lg:grid-cols-6 gap-4 ${showFilters ? 'block' : 'hidden lg:grid'}`}>
             <div>
               <label className="block text-sm font-medium mb-2">القسم</label>
               <select
@@ -1353,6 +1353,22 @@ const SearchPage = () => {
                 placeholder="اسم الكاتب"
                 className="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
               />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">الوسوم</label>
+              <select
+                value={filters.tags}
+                onChange={(e) => handleFilterChange('tags', e.target.value)}
+                className="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              >
+                <option value="">جميع الوسوم</option>
+                {availableTags.map((tag) => (
+                  <option key={tag.name} value={tag.name}>
+                    #{tag.name} ({tag.count})
+                  </option>
+                ))}
+              </select>
             </div>
             
             <div>
