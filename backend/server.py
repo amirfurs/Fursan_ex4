@@ -582,9 +582,21 @@ async def search_content(
     article_filters = {}
     section_filters = {}
     
-    # Text search using regex for MongoDB
+    # Text search using regex for MongoDB with Arabic normalization
     if q.strip():
-        search_regex = {"$regex": q.strip(), "$options": "i"}  # case insensitive
+        # Normalize Arabic text for better search results
+        # Handle hamza variations: أ إ آ ا - ؤ و - ئ ي - ء
+        normalized_query = q.strip()
+        
+        # Create search patterns that handle hamza variations
+        # Replace أ إ آ with pattern that matches all variations
+        hamza_alef_pattern = normalized_query.replace('أ', '[أإآا]').replace('إ', '[أإآا]').replace('آ', '[أإآا]').replace('ا', '[أإآا]')
+        # Replace ؤ with pattern that matches ؤ and و
+        hamza_waw_pattern = hamza_alef_pattern.replace('ؤ', '[ؤو]').replace('و', '[ؤو]')
+        # Replace ئ with pattern that matches ئ and ي
+        final_pattern = hamza_waw_pattern.replace('ئ', '[ئي]').replace('ي', '[ئي]')
+        
+        search_regex = {"$regex": final_pattern, "$options": "i"}  # case insensitive
         article_filters["$or"] = [
             {"title": search_regex},
             {"content": search_regex},
