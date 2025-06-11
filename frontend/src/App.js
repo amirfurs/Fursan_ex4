@@ -1158,11 +1158,55 @@ const SearchPage = () => {
   return (
     <PublicLayout>
       <div className="container mx-auto px-4 py-8">
-        {/* Search Results Header */}
+        {/* Search Results Header with Search Bar */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 arabic-title">
+          <h1 className="text-3xl font-bold mb-4 arabic-title">
             نتائج البحث عن: <span className="text-red-500">"{query}"</span>
           </h1>
+          
+          {/* New Search Bar on Results Page */}
+          <div className="mb-4">
+            <form onSubmit={handleSearchSubmit} className="relative max-w-2xl">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInput}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                placeholder="ابحث مرة أخرى..."
+                className="w-full pl-4 pr-12 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-red-500 focus:ring-1 focus:ring-red-500 arabic-content text-lg"
+              />
+              <button
+                type="submit"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-red-600 hover:bg-red-700 p-2 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            </form>
+            
+            {/* Search Suggestions on Results Page */}
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl mt-1 z-50 max-h-64 overflow-y-auto max-w-2xl">
+                {searchSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => selectSuggestion(suggestion)}
+                    className="block w-full text-left px-4 py-3 hover:bg-gray-800 hover:text-red-400 transition-colors border-b border-gray-700 last:border-b-0 first:rounded-t-lg last:rounded-b-lg"
+                  >
+                    <div className="flex items-center space-x-2 space-x-reverse">
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      <span className="arabic-content">{suggestion}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          
           <p className="text-gray-400">
             {results?.total_results || 0} نتيجة
           </p>
