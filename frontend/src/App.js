@@ -2631,6 +2631,291 @@ const AdminPanel = () => {
   );
 };
 
+// Tag Page Component
+const TagPage = () => {
+  const { tagName } = useParams();
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [tagStats, setTagStats] = useState(null);
+
+  useEffect(() => {
+    fetchTagArticles();
+    fetchTagStats();
+  }, [tagName]);
+
+  const fetchTagArticles = async () => {
+    try {
+      const response = await axios.get(`${API}/tags/${encodeURIComponent(tagName)}/articles`);
+      setArticles(response.data);
+    } catch (error) {
+      console.error("Error fetching tag articles:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTagStats = async () => {
+    try {
+      const response = await axios.get(`${API}/tags`);
+      const tagData = response.data.tags.find(tag => tag.name === tagName);
+      setTagStats(tagData);
+    } catch (error) {
+      console.error("Error fetching tag stats:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="animate-pulse">
+            <div className="text-6xl mb-4">🏷️</div>
+            <p className="text-gray-400">جارٍ تحميل مقالات الوسم...</p>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-8">
+        {/* Tag Header */}
+        <div className="mb-12 text-center">
+          <div className="inline-flex items-center bg-gradient-to-r from-red-600 to-red-700 rounded-full px-8 py-4 mb-6">
+            <svg className="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+            </svg>
+            <span className="text-2xl font-bold">#{tagName}</span>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 arabic-title">
+            مقالات بوسم <span className="text-red-500">#{tagName}</span>
+          </h1>
+          
+          {tagStats && (
+            <p className="text-xl text-gray-400">
+              {tagStats.count} {tagStats.count === 1 ? 'مقال' : 'مقالة'}
+            </p>
+          )}
+        </div>
+
+        {/* Breadcrumb */}
+        <nav className="mb-8 text-sm">
+          <div className="flex items-center space-x-2 space-x-reverse text-gray-400">
+            <Link to="/" className="hover:text-red-400 transition-colors">الرئيسية</Link>
+            <span>«</span>
+            <Link to="/tags" className="hover:text-red-400 transition-colors">الوسوم</Link>
+            <span>«</span>
+            <span className="text-white">#{tagName}</span>
+          </div>
+        </nav>
+
+        {/* Articles Grid */}
+        {articles.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {articles.map((article) => (
+              <Link
+                key={article.id}
+                to={`/article/${article.id}`}
+                className="bg-gray-900 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300 group shadow-lg article-card"
+              >
+                {article.image_data && (
+                  <img
+                    src={article.image_data}
+                    alt={article.title}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                )}
+                <div className="p-6">
+                  <div className="flex items-center text-sm text-red-500 mb-3">
+                    <span>{new Date(article.created_at).toLocaleDateString('ar-SA')}</span>
+                    <span className="mx-2">•</span>
+                    <span className="font-medium">{article.author}</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-red-400 transition-colors line-clamp-2 arabic-title">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-400 line-clamp-3 mb-4">
+                    {article.content.slice(0, 120)}...
+                  </p>
+                  
+                  {/* Other tags */}
+                  {article.tags && article.tags.length > 1 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {article.tags.filter(tag => tag !== tagName).slice(0, 3).map((tag, tagIndex) => (
+                        <Link
+                          key={tagIndex}
+                          to={`/tag/${encodeURIComponent(tag)}`}
+                          className="bg-gray-700 hover:bg-red-600/30 text-gray-300 hover:text-red-400 px-2 py-1 rounded-full text-xs transition-colors"
+                        >
+                          #{tag}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span className="flex items-center">
+                      <svg className="w-4 h-4 text-red-400 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                      </svg>
+                      {article.likes_count}
+                    </span>
+                    <span className="text-red-400 group-hover:translate-x-1 transition-transform">
+                      اقرأ المزيد ←
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-32">
+            <div className="text-8xl mb-8">🏷️</div>
+            <h2 className="text-4xl font-bold mb-4 arabic-title">لا توجد مقالات</h2>
+            <p className="text-xl text-gray-400 mb-8">لم يتم العثور على مقالات بهذا الوسم</p>
+            <Link to="/tags" className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+              تصفح جميع الوسوم
+            </Link>
+          </div>
+        )}
+      </div>
+    </PublicLayout>
+  );
+};
+
+// All Tags Page Component
+const AllTagsPage = () => {
+  const [tags, setTags] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAllTags();
+  }, []);
+
+  const fetchAllTags = async () => {
+    try {
+      const response = await axios.get(`${API}/tags`);
+      setTags(response.data.tags);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="animate-pulse">
+            <div className="text-6xl mb-4">🏷️</div>
+            <p className="text-gray-400">جارٍ تحميل الوسوم...</p>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      <div className="container mx-auto px-4 py-8">
+        {/* Page Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 arabic-title">
+            جميع <span className="text-red-500">الوسوم</span>
+          </h1>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            تصفح المقالات حسب الوسوم والمواضيع المختلفة
+          </p>
+        </div>
+
+        {/* Breadcrumb */}
+        <nav className="mb-8 text-sm">
+          <div className="flex items-center space-x-2 space-x-reverse text-gray-400">
+            <Link to="/" className="hover:text-red-400 transition-colors">الرئيسية</Link>
+            <span>«</span>
+            <span className="text-white">الوسوم</span>
+          </div>
+        </nav>
+
+        {/* Tags Cloud */}
+        {tags.length > 0 ? (
+          <div className="mb-16">
+            <h2 className="text-2xl font-bold mb-8 arabic-title">سحابة الوسوم</h2>
+            <div className="bg-gray-900 rounded-xl p-8">
+              <div className="flex flex-wrap gap-3 justify-center">
+                {tags.map((tag) => {
+                  // Calculate relative size based on count
+                  const maxCount = Math.max(...tags.map(t => t.count));
+                  const relativeSize = (tag.count / maxCount) * 100;
+                  let sizeClass = 'text-sm';
+                  if (relativeSize > 80) sizeClass = 'text-2xl';
+                  else if (relativeSize > 60) sizeClass = 'text-xl';
+                  else if (relativeSize > 40) sizeClass = 'text-lg';
+                  else if (relativeSize > 20) sizeClass = 'text-base';
+
+                  return (
+                    <Link
+                      key={tag.name}
+                      to={`/tag/${encodeURIComponent(tag.name)}`}
+                      className={`${sizeClass} bg-gradient-to-r from-red-600/20 to-red-700/20 hover:from-red-600/40 hover:to-red-700/40 text-red-400 hover:text-red-300 px-4 py-2 rounded-full transition-all duration-300 hover:scale-110 border border-red-600/30 hover:border-red-500/50`}
+                    >
+                      #{tag.name} ({tag.count})
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {/* Tags List */}
+        {tags.length > 0 ? (
+          <div>
+            <h2 className="text-2xl font-bold mb-8 arabic-title">قائمة الوسوم</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tags.map((tag) => (
+                <Link
+                  key={tag.name}
+                  to={`/tag/${encodeURIComponent(tag.name)}`}
+                  className="bg-gray-900 rounded-xl p-6 hover:bg-gray-800 transition-all duration-300 group border border-gray-800 hover:border-red-500"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold group-hover:text-red-400 transition-colors mb-2">
+                        #{tag.name}
+                      </h3>
+                      <p className="text-gray-400">
+                        {tag.count} {tag.count === 1 ? 'مقال' : 'مقالة'}
+                      </p>
+                    </div>
+                    <div className="text-red-400 group-hover:translate-x-1 transition-transform">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-32">
+            <div className="text-8xl mb-8">🏷️</div>
+            <h2 className="text-4xl font-bold mb-4 arabic-title">لا توجد وسوم بعد</h2>
+            <p className="text-xl text-gray-400 mb-8">لم يتم إنشاء أي وسوم للمقالات حتى الآن</p>
+            <Link to="/" className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+              العودة للرئيسية
+            </Link>
+          </div>
+        )}
+      </div>
+    </PublicLayout>
+  );
+};
+
 // Main App Component
 function App() {
   return (
@@ -2643,6 +2928,8 @@ function App() {
             <Route path="/article/:id" element={<ArticlePage />} />
             <Route path="/section/:id" element={<SectionPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/tag/:tagName" element={<TagPage />} />
+            <Route path="/tags" element={<AllTagsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfilePage />} />
