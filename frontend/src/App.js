@@ -659,6 +659,64 @@ const HomePage = () => {
         </div>
       )}
 
+      {/* Popular Tags Section */}
+      {popularTags.length > 0 && (
+        <div className="container mx-auto px-4 py-16">
+          <h2 className="text-4xl font-bold text-center mb-12 arabic-title">
+            الوسوم <span className="text-red-500">الشائعة</span>
+          </h2>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-gray-900 rounded-xl p-8">
+              <div className="flex flex-wrap gap-4 justify-center">
+                {popularTags.map((tag, index) => {
+                  // Calculate relative size based on count
+                  const maxCount = Math.max(...popularTags.map(t => t.count));
+                  const relativeSize = (tag.count / maxCount) * 100;
+                  let sizeClass = 'text-sm px-3 py-2';
+                  let bgIntensity = 'from-red-600/20 to-red-700/20 hover:from-red-600/40 hover:to-red-700/40';
+                  
+                  if (relativeSize > 80) {
+                    sizeClass = 'text-xl px-6 py-3';
+                    bgIntensity = 'from-red-600/40 to-red-700/40 hover:from-red-600/60 hover:to-red-700/60';
+                  } else if (relativeSize > 60) {
+                    sizeClass = 'text-lg px-5 py-3';
+                    bgIntensity = 'from-red-600/35 to-red-700/35 hover:from-red-600/55 hover:to-red-700/55';
+                  } else if (relativeSize > 40) {
+                    sizeClass = 'text-base px-4 py-2';
+                    bgIntensity = 'from-red-600/30 to-red-700/30 hover:from-red-600/50 hover:to-red-700/50';
+                  } else if (relativeSize > 20) {
+                    sizeClass = 'text-sm px-3 py-2';
+                    bgIntensity = 'from-red-600/25 to-red-700/25 hover:from-red-600/45 hover:to-red-700/45';
+                  }
+
+                  return (
+                    <Link
+                      key={tag.name}
+                      to={`/tag/${encodeURIComponent(tag.name)}`}
+                      className={`${sizeClass} bg-gradient-to-r ${bgIntensity} text-red-400 hover:text-red-300 rounded-full transition-all duration-300 hover:scale-110 border border-red-600/30 hover:border-red-500/50 font-medium`}
+                    >
+                      #{tag.name}
+                      <span className="text-xs opacity-75 mr-1">({tag.count})</span>
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className="text-center mt-8">
+                <Link 
+                  to="/tags" 
+                  className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                >
+                  عرض جميع الوسوم
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Empty State */}
       {articles.length === 0 && (
         <div className="container mx-auto px-4 py-32 text-center">
