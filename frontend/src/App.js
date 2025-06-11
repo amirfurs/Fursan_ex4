@@ -78,7 +78,11 @@ export const AuthProvider = ({ children }) => {
 const PublicLayout = ({ children }) => {
   const [sections, setSections] = useState([]);
   const [siteLogo, setSiteLogo] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSections();
@@ -101,6 +105,41 @@ const PublicLayout = ({ children }) => {
     } catch (error) {
       console.error("Error fetching logo:", error);
     }
+  };
+
+  const fetchSearchSuggestions = async (query) => {
+    if (query.length < 2) {
+      setSearchSuggestions([]);
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`${API}/search/suggestions?q=${encodeURIComponent(query)}`);
+      setSearchSuggestions(response.data.suggestions);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  };
+
+  const handleSearchInput = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    fetchSearchSuggestions(value);
+    setShowSuggestions(true);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSuggestions(false);
+    }
+  };
+
+  const selectSuggestion = (suggestion) => {
+    setSearchQuery(suggestion);
+    navigate(`/search?q=${encodeURIComponent(suggestion)}`);
+    setShowSuggestions(false);
   };
 
   return (
