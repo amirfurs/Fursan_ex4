@@ -181,7 +181,7 @@ const PublicLayout = ({ children }) => {
                     onFocus={() => setShowSuggestions(true)}
                     onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     placeholder="ابحث في المقالات..."
-                    className="w-64 pl-4 pr-10 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-red-500 focus:ring-1 focus:ring-red-500 arabic-content"
+                    className="w-48 lg:w-64 pl-4 pr-10 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-red-500 focus:ring-1 focus:ring-red-500 arabic-content"
                   />
                   <button
                     type="submit"
